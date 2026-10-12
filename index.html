@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Painel Pessoal & Trabalho</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        
+        .font-title {
+            font-family: 'Dancing Script', cursive, sans-serif;
+        }
+        body {
+            font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+            background-color: #1A1A1A;
+            color: #D8B4D9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-4xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
+                Meu Painel Integrado
+            </h1>
+            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full mt-2 sm:mt-0 flex items-center gap-1 border border-[#F48FB1]/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" id="status-dot"></span>
+                <span id="status-text">Sincronizado na Nuvem</span>
+            </div>
+        </div>
+        <!-- Abas de Navegação -->
+        <div class="max-w-6xl mx-auto px-4 flex gap-4 border-b border-[#6B3A7E] overflow-x-auto">
+            <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-4 py-2 font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition">To-Do List</button>
+            <button onclick="switchTab('notes')" id="btn-notes" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition">Bloco de Notas</button>
+            <button onclick="switchTab('agenda')" id="btn-agenda" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition">Google Agenda</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- ABA 1: TO-DO LIST -->
+        <div id="tab-todo" class="tab-content space-y-6">
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
+                <h2 class="text-xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Adicionar Nova Tarefa</h2>
+                <form id="todo-form" class="flex flex-col sm:flex-row gap-3">
+                    <input type="text" id="todo-text" placeholder="O que precisa ser feito?" required class="flex-grow px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    <select id="todo-category" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <option value="Trabalho">Trabalho</option>
+                        <option value="Pessoal">Pessoal</option>
+                        <option value="Urgente">Urgente</option>
+                    </select>
+                    <button type="submit" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-5 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">Adicionar</button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#502064]">
+                    <h3 class="font-title text-xl text-[#F48FB1] border-b border-[#6B3A7E] pb-2 mb-3">Trabalho</h3>
+                    <ul id="list-Trabalho" class="space-y-2"></ul>
+                </div>
+                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#502064]">
+                    <h3 class="font-title text-xl text-[#D8B4D9] border-b border-[#6B3A7E] pb-2 mb-3">Pessoal</h3>
+                    <ul id="list-Pessoal" class="space-y-2"></ul>
+                </div>
+                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#6B0F1A]/60">
+                    <h3 class="font-title text-xl text-rose-400 border-b border-[#6B0F1A] pb-2 mb-3">Urgente</h3>
+                    <ul id="list-Urgente" class="space-y-2"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: BLOCO DE NOTAS -->
+        <div id="tab-notes" class="tab-content hidden space-y-6">
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
+                <h2 class="text-xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-note-sticky"></i> Criar / Editar Nota</h2>
+                <form id="note-form" class="space-y-3">
+                    <input type="text" id="note-title" placeholder="Título da Nota" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    <textarea id="note-body" rows="4" placeholder="Escreva sua nota aqui..." required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]"></textarea>
+                    <button type="submit" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-5 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">Salvar Nota</button>
+                </form>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="notes-grid"></div>
+        </div>
+
+        <!-- ABA 3: GOOGLE AGENDA -->
+        <div id="tab-agenda" class="tab-content hidden space-y-6">
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-[#6B3A7E] pb-3">
+                    <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2"><i class="fa-solid fa-calendar-days"></i> Minha Agenda do Google</h2>
+                    <a href="https://calendar.google.com" target="_blank" style="background-color: #6B0F1A;" class="text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#801320] transition border border-[#F48FB1]/30 flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Novo Evento no Google Agenda
+                    </a>
+                </div>
+                <!-- Google Calendar Embed da Nathalia -->
+                <div class="w-full h-[600px] rounded-lg overflow-hidden border border-[#6B3A7E]">
+                    <iframe src="https://calendar.google.com/calendar/embed?src=nathalialex12%40gmail.com&ctz=America%2FSao_Paulo&hl=pt_BR" style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDKs via CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Chaves reais do seu projeto
+        const firebaseConfig = {
+            apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
+            authDomain: "painelpessoal-ab165.firebaseapp.com",
+            projectId: "painelpessoal-ab165",
+            storageBucket: "painelpessoal-ab165.firebasestorage.app",
+            messagingSenderId: "113043267624",
+            appId: "1:113043267624:web:b2d40daac28c3a55a4951d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Controle de Abas
+        window.switchTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('border-b-2', 'border-[#F48FB1]', 'text-[#F48FB1]');
+                el.classList.add('text-[#D8B4D9]/70');
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`btn-${tabName}`);
+            activeBtn.classList.add('border-b-2', 'border-[#F48FB1]', 'text-[#F48FB1]');
+            activeBtn.classList.remove('text-[#D8B4D9]/70');
+        }
+
+        // To-Do List
+        const todoForm = document.getElementById('todo-form');
+        todoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('todo-text').value;
+            const category = document.getElementById('todo-category').value;
+            try {
+                await addDoc(collection(db, "todos"), { text, category, completed: false, createdAt: Date.now() });
+                todoForm.reset();
+            } catch (err) { console.error("Erro ao adicionar tarefa:", err); }
+        });
+
+        onSnapshot(query(collection(db, "todos"), orderBy("createdAt", "desc")), (snapshot) => {
+            ['Trabalho', 'Pessoal', 'Urgente'].forEach(cat => document.getElementById(`list-${cat}`).innerHTML = '');
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const listEl = document.getElementById(`list-${data.category}`);
+                if (listEl) {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
+                    li.innerHTML = `
+                        <label class="flex items-center gap-2 cursor-pointer ${data.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'}">
+                            <input type="checkbox" ${data.completed ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', ${!data.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                            <span>${data.text}</span>
+                        </label>
+                        <button onclick="deleteTodo('${docSnap.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                    `;
+                    listEl.appendChild(li);
+                }
+            });
+        });
+
+        window.toggleTodo = async (id, status) => {
+            await updateDoc(doc(db, "todos", id), { completed: status });
+        }
+        window.deleteTodo = async (id) => {
+            await deleteDoc(doc(db, "todos", id));
+        }
+
+        // Bloco de Notas
+        const noteForm = document.getElementById('note-form');
+        noteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('note-title').value;
+            const body = document.getElementById('note-body').value;
+            try {
+                await addDoc(collection(db, "notes"), { title, body, createdAt: Date.now() });
+                noteForm.reset();
+            } catch (err) { console.error("Erro ao salvar nota:", err); }
+        });
+
+        onSnapshot(query(collection(db, "notes"), orderBy("createdAt", "desc")), (snapshot) => {
+            const grid = document.getElementById('notes-grid');
+            grid.innerHTML = '';
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl shadow-md border border-[#6B3A7E] flex flex-col justify-between";
+                card.style.backgroundColor = "#221926";
+                card.innerHTML = `
+                    <div>
+                        <h3 class="font-title text-xl text-[#F48FB1] mb-1">${data.title}</h3>
+                        <p class="text-sm text-[#D8B4D9] whitespace-pre-wrap">${data.body}</p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button onclick="deleteNote('${docSnap.id}')" class="text-[#D8B4D9]/60 hover:text-rose-400 text-xs transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        });
+
+        window.deleteNote = async (id) => {
+            await deleteDoc(doc(db, "notes", id));
+        }
+    </script>
+</body>
+</html>
