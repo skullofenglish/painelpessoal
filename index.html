@@ -9,7 +9,7 @@
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Fonte Harlow Solid via CDN e Fallback -->
+    <!-- Fonte Harlow Solid via CDN -->
     <link href="https://fonts.cdnfonts.com/css/harlow-solid-italic" rel="stylesheet">
     <style>
         .font-title {
@@ -19,6 +19,10 @@
             font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
             background-color: #1A1A1A;
             color: #D8B4D9;
+        }
+        /* Ajuste de ícone do campo de data para tema escuro */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
         }
     </style>
 </head>
@@ -46,34 +50,28 @@
     <!-- Main Container -->
     <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
-        <!-- ABA 1: TO-DO LIST -->
+        <!-- ABA 1: TO-DO LIST (POR DATAS) -->
         <div id="tab-todo" class="tab-content space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
                 <h2 class="text-xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-list-check"></i> Adicionar Nova Tarefa</h2>
                 <form id="todo-form" class="flex flex-col sm:flex-row gap-3">
                     <input type="text" id="todo-text" placeholder="O que precisa ser feito?" required class="flex-grow px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    
                     <select id="todo-category" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                         <option value="Trabalho">Trabalho</option>
                         <option value="Pessoal">Pessoal</option>
                         <option value="Urgente">Urgente</option>
                     </select>
+
+                    <input type="date" id="todo-date" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+
                     <button type="submit" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-5 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">Adicionar</button>
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#502064]">
-                    <h3 class="font-title text-xl text-[#F48FB1] border-b border-[#6B3A7E] pb-2 mb-3">Trabalho</h3>
-                    <ul id="list-Trabalho" class="space-y-2"></ul>
-                </div>
-                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#502064]">
-                    <h3 class="font-title text-xl text-[#D8B4D9] border-b border-[#6B3A7E] pb-2 mb-3">Pessoal</h3>
-                    <ul id="list-Pessoal" class="space-y-2"></ul>
-                </div>
-                <div style="background-color: #262626;" class="p-4 rounded-xl shadow-lg border border-[#6B0F1A]/60">
-                    <h3 class="font-title text-xl text-rose-400 border-b border-[#6B0F1A] pb-2 mb-3">Urgente</h3>
-                    <ul id="list-Urgente" class="space-y-2"></ul>
-                </div>
+            <!-- Ddias Agrupados por Data -->
+            <div id="todos-by-date-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <p class="text-neutral-400 italic col-span-full">Carregando tarefas...</p>
             </div>
         </div>
 
@@ -99,7 +97,6 @@
                         <i class="fa-solid fa-plus"></i> Novo Evento no Google Agenda
                     </a>
                 </div>
-                <!-- Google Calendar Embed da Nathalia -->
                 <div class="w-full h-[600px] rounded-lg overflow-hidden border border-[#6B3A7E]">
                     <iframe src="https://calendar.google.com/calendar/embed?src=nathalialex12%40gmail.com&ctz=America%2FSao_Paulo&hl=pt_BR" style="border: 0" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
                 </div>
@@ -113,7 +110,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Chaves reais do seu projeto
         const firebaseConfig = {
             apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
             authDomain: "painelpessoal-ab165.firebaseapp.com",
@@ -125,6 +121,10 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Preenche o input de data com o dia de hoje por padrão
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('todo-date').value = todayStr;
 
         // Controle de Abas
         window.switchTab = function(tabName) {
@@ -139,35 +139,94 @@
             activeBtn.classList.remove('text-[#D8B4D9]/70');
         }
 
-        // To-Do List
+        // Adicionar Tarefa com Data
         const todoForm = document.getElementById('todo-form');
         todoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = document.getElementById('todo-text').value;
             const category = document.getElementById('todo-category').value;
+            const dueDate = document.getElementById('todo-date').value;
             try {
-                await addDoc(collection(db, "todos"), { text, category, completed: false, createdAt: Date.now() });
+                await addDoc(collection(db, "todos"), { 
+                    text, 
+                    category, 
+                    dueDate, 
+                    completed: false, 
+                    createdAt: Date.now() 
+                });
                 todoForm.reset();
+                document.getElementById('todo-date').value = todayStr;
             } catch (err) { console.error("Erro ao adicionar tarefa:", err); }
         });
 
-        onSnapshot(query(collection(db, "todos"), orderBy("createdAt", "desc")), (snapshot) => {
-            ['Trabalho', 'Pessoal', 'Urgente'].forEach(cat => document.getElementById(`list-${cat}`).innerHTML = '');
+        // Formatação de data em português
+        function formatDateHeader(dateString) {
+            const [year, month, day] = dateString.split('-');
+            const dateObj = new Date(year, month - 1, day);
+            const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+            const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
+            return `${capitalizedWeekday}, ${day}/${month}/${year}`;
+        }
+
+        // Renderização por Dias Reais
+        onSnapshot(query(collection(db, "todos"), orderBy("dueDate", "asc")), (snapshot) => {
+            const container = document.getElementById('todos-by-date-container');
+            container.innerHTML = '';
+
+            if (snapshot.empty) {
+                container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa agendada.</p>`;
+                return;
+            }
+
+            // Agrupa por data
+            const grouped = {};
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
-                const listEl = document.getElementById(`list-${data.category}`);
-                if (listEl) {
+                const dateKey = data.dueDate || todayStr;
+                if (!grouped[dateKey]) grouped[dateKey] = [];
+                grouped[dateKey].push({ id: docSnap.id, ...data });
+            });
+
+            // Cria um card para cada data
+            Object.keys(grouped).sort().forEach(dateKey => {
+                const dayCard = document.createElement('div');
+                dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
+                dayCard.style.backgroundColor = "#262626";
+
+                const isToday = dateKey === todayStr;
+                const headerColor = isToday ? "text-[#F48FB1]" : "text-[#D8B4D9]";
+                const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2">Hoje</span>` : '';
+
+                dayCard.innerHTML = `
+                    <h3 class="font-title text-lg ${headerColor} border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                        <span>${formatDateHeader(dateKey)}</span>
+                        ${badgeTag}
+                    </h3>
+                    <ul class="space-y-2" id="list-${dateKey}"></ul>
+                `;
+
+                container.appendChild(dayCard);
+                const listEl = dayCard.querySelector(`#list-${dateKey}`);
+
+                grouped[dateKey].forEach(item => {
                     const li = document.createElement('li');
                     li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
+
+                    const badgeCategory = item.category === 'Urgente' ? 'text-rose-400 border-rose-900' :
+                                         item.category === 'Trabalho' ? 'text-purple-300 border-purple-900' : 'text-pink-300 border-pink-900';
+
                     li.innerHTML = `
-                        <label class="flex items-center gap-2 cursor-pointer ${data.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'}">
-                            <input type="checkbox" ${data.completed ? 'checked' : ''} onchange="toggleTodo('${docSnap.id}', ${!data.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
-                            <span>${data.text}</span>
-                        </label>
-                        <button onclick="deleteTodo('${docSnap.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex items-center gap-2 flex-grow overflow-hidden">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                            <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">${item.text}</span>
+                        </div>
+                        <div class="flex items-center gap-2 ml-2">
+                            <span class="text-[10px] px-1.5 py-0.5 border rounded ${badgeCategory}">${item.category}</span>
+                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     `;
                     listEl.appendChild(li);
-                }
+                });
             });
         });
 
