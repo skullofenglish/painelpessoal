@@ -135,60 +135,113 @@
                     <span class="text-xs text-[#D8B4D9]/70">Total Previsto no Mês</span>
                     <p id="stat-total" class="text-2xl font-bold text-[#F48FB1] mt-1">R\$ 0,00</p>
                 </div>
-                <div style="background-color: #262626;" class="p-4 rounded-xl border border-emerald-900">
-                    <span class="text-xs text-emerald-400">Total Recebido</span>
-                    <p id="stat-pago" class="text-2xl font-bold text-emerald-400 mt-1">R\$ 0,00</p>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
+                    <span class="text-xs text-[#F48FB1]">Total Recebido</span>
+                    <p id="stat-pago" class="text-2xl font-bold text-[#F48FB1] mt-1">R\$ 0,00</p>
                 </div>
-                <div style="background-color: #262626;" class="p-4 rounded-xl border border-amber-900">
-                    <span class="text-xs text-amber-300">A Receber / Pendente</span>
-                    <p id="stat-pendente" class="text-2xl font-bold text-amber-300 mt-1">R\$ 0,00</p>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
+                    <span class="text-xs text-[#D8B4D9]">A Receber / Pendente</span>
+                    <p id="stat-pendente" class="text-2xl font-bold text-[#D8B4D9] mt-1">R\$ 0,00</p>
                 </div>
-                <div style="background-color: #262626;" class="p-4 rounded-xl border border-rose-900">
-                    <span class="text-xs text-rose-400">Cobranças Atrasadas</span>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B0F1A]">
+                    <span class="text-xs text-rose-300">Cobranças Atrasadas</span>
                     <p id="stat-atrasado" class="text-2xl font-bold text-rose-400 mt-1">0 Alunos</p>
                 </div>
             </div>
 
-            <!-- Formulário de Adicionar/Editar Aluno -->
-            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
-                <div class="flex justify-between items-center">
+            <!-- Formulário de Registro / Edição de Aluno -->
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
+                <div class="flex justify-between items-center border-b border-[#6B3A7E] pb-2">
                     <h2 id="aluno-form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
-                        <i class="fa-solid fa-user-plus"></i> Registrar Aluno / Mensalidade
+                        <i class="fa-solid fa-user-plus"></i> Registrar Aluno & Aulas
                     </h2>
                     <button id="cancel-aluno-btn" onclick="cancelAlunoEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
                 </div>
 
-                <form id="aluno-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <form id="aluno-form" class="space-y-4">
                     <input type="hidden" id="aluno-editing-id" value="">
                     
-                    <input type="text" id="aluno-nome" placeholder="Nome do Aluno(a)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
-                    
-                    <input type="number" step="0.01" id="aluno-valor" placeholder="Valor (R\$)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Nome do Aluno(a)</label>
+                            <input type="text" id="aluno-nome" placeholder="ex: Ana Silva" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        </div>
 
-                    <input type="number" min="1" max="31" id="aluno-vencimento" placeholder="Dia Vencimento (ex: 10)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Valor por Hora (R\$)</label>
+                            <input type="number" step="0.01" id="aluno-valor-hora" placeholder="ex: 50.00" oninput="calculateTotalAluno()" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        </div>
 
-                    <select id="aluno-metodo" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
-                        <option value="Pix">Pix</option>
-                        <option value="Dinheiro">Dinheiro</option>
-                        <option value="Cartão">Cartão</option>
-                        <option value="Transferência">Transferência</option>
-                    </select>
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Horas / Sessões</label>
+                            <input type="number" min="1" id="aluno-horas" placeholder="ex: 4" oninput="calculateTotalAluno()" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        </div>
 
-                    <select id="aluno-status" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
-                        <option value="Pendente">🟡 Pendente</option>
-                        <option value="Pago">🟢 Pago</option>
-                        <option value="Atrasado">🔴 Atrasado</option>
-                    </select>
+                        <div>
+                            <label class="text-xs text-[#F48FB1] font-semibold mb-1 block">Total Calculado (R\$)</label>
+                            <input type="text" id="aluno-total-display" readonly value="R\$ 0,00" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-[#F48FB1] font-bold rounded-lg focus:outline-none cursor-not-allowed">
+                        </div>
+                    </div>
 
-                    <input type="text" id="aluno-[#notes]" placeholder="Observações (ex: repor aula dia 12)" class="sm:col-span-2 lg:col-span-2 px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Data de Vencimento</label>
+                            <input type="date" id="aluno-vencimento-date" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        </div>
 
-                    <button type="submit" id="aluno-submit-btn" style="background-color: #6B0F1A;" class="sm:col-span-2 lg:col-span-1 hover:bg-[#801320] text-white px-6 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">
-                        Salvar Aluno
-                    </button>
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Método de Pagamento</label>
+                            <select id="aluno-metodo" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                                <option value="Pix">Pix</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                                <option value="Cartão">Cartão</option>
+                                <option value="Transferência">Transferência</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Status do Pagamento</label>
+                            <select id="aluno-status" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                                <option value="Pendente">🟡 Pendente</option>
+                                <option value="Pago">🟢 Pago</option>
+                                <option value="Atrasado">🔴 Atrasado</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Data do Pagamento (se pago)</label>
+                            <input type="date" id="aluno-pagamento-date" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                        <input type="text" id="aluno-notes" placeholder="Observações (ex: repor aula no dia 12)" class="w-full sm:flex-grow px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+
+                        <button type="submit" id="aluno-submit-btn" style="background-color: #6B0F1A;" class="w-full sm:w-auto hover:bg-[#801320] text-white px-8 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30 whitespace-nowrap">
+                            Salvar Aluno
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Grade de Alunos -->
+            <!-- Filtros e Ordenação de Alunos -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-[#262626] p-3 rounded-xl border border-[#6B3A7E]/40">
+                <span class="text-sm text-[#F48FB1] font-title text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-users"></i> Lista de Alunos
+                </span>
+                
+                <div class="flex items-center gap-2">
+                    <label class="text-xs text-[#D8B4D9]">Organizar por:</label>
+                    <select id="sort-alunos" onchange="renderAlunosList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                        <option value="created">Data de Adição</option>
+                        <option value="status">Status (Atrasado > Pendente > Pago)</option>
+                        <option value="vencimento">Data de Vencimento</option>
+                        <option value="pagamento">Data de Pagamento</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grade de Cards dos Alunos -->
             <div id="alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <p class="text-neutral-400 italic col-span-full">Carregando dados dos alunos...</p>
             </div>
@@ -257,7 +310,7 @@
     <!-- Firebase SDKs via CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, setDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
@@ -273,6 +326,7 @@
 
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('todo-date').value = todayStr;
+        document.getElementById('aluno-vencimento-date').value = todayStr;
 
         window.toggleUrgentSection = function() {
             const content = document.getElementById('urgent-section-content');
@@ -339,13 +393,19 @@
         }
 
         function formatDateHeader(dateString) {
+            if (!dateString) return '';
             const [year, month, day] = dateString.split('-');
             const dateObj = new Date(year, month - 1, day);
             const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
             return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${day}/${month}/${year}`;
         }
 
-        // Arquivar todos do dia
+        function formatDateDisplay(dateString) {
+            if (!dateString) return 'Não informada';
+            const [year, month, day] = dateString.split('-');
+            return `${day}/${month}/${year}`;
+        }
+
         window.archiveDay = async function(dateKey, itemsJson) {
             const items = JSON.parse(decodeURIComponent(itemsJson));
             for (const item of items) {
@@ -353,7 +413,6 @@
             }
         }
 
-        // Desarquivar dia
         window.unarchiveDay = async function(itemsJson) {
             const items = JSON.parse(decodeURIComponent(itemsJson));
             for (const item of items) {
@@ -372,7 +431,6 @@
             urgentList.innerHTML = '';
 
             let urgentCount = 0;
-
             const activeGrouped = {};
             const archivedGrouped = {};
 
@@ -410,7 +468,6 @@
                 urgentList.innerHTML = `<p class="text-xs text-rose-300/60 italic">Nenhuma tarefa urgente pendente.</p>`;
             }
 
-            // Ativos
             if (Object.keys(activeGrouped).length === 0) {
                 container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa ativa agendada.</p>`;
             } else {
@@ -422,7 +479,6 @@
                     const isToday = dateKey === todayStr;
                     const headerColor = isToday ? "text-[#F48FB1]" : "text-[#D8B4D9]";
                     const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2">Hoje</span>` : '';
-                    
                     const encodedItems = encodeURIComponent(JSON.stringify(activeGrouped[dateKey]));
 
                     dayCard.innerHTML = `
@@ -464,7 +520,6 @@
                 });
             }
 
-            // Arquivados
             if (Object.keys(archivedGrouped).length === 0) {
                 archiveContainer.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum dia arquivado ainda.</p>`;
             } else {
@@ -504,37 +559,62 @@
         window.toggleTodo = async (id, status) => { await updateDoc(doc(db, "todos", id), { completed: status }); }
         window.deleteTodo = async (id) => { await deleteDoc(doc(db, "todos", id)); }
 
-        // ABA ALUNOS & PAGAMENTOS
+        // ABA ALUNOS & PAGAMENTOS (Cálculos, Datas, Ordenação)
+        let alunosDataCache = [];
+
+        window.calculateTotalAluno = function() {
+            const vHora = parseFloat(document.getElementById('aluno-valor-hora').value) || 0;
+            const horas = parseFloat(document.getElementById('aluno-horas').value) || 0;
+            const total = vHora * horas;
+            document.getElementById('aluno-total-display').value = `R$ ${total.toFixed(2)}`;
+        }
+
         const alunoForm = document.getElementById('aluno-form');
         alunoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = document.getElementById('aluno-nome').value;
-            const valor = parseFloat(document.getElementById('aluno-valor').value) || 0;
-            const vencimento = parseInt(document.getElementById('aluno-vencimento').value) || 1;
+            const valorHora = parseFloat(document.getElementById('aluno-valor-hora').value) || 0;
+            const horas = parseFloat(document.getElementById('aluno-horas').value) || 0;
+            const totalValor = valorHora * horas;
+
+            const vencimentoDate = document.getElementById('aluno-vencimento-date').value;
             const metodo = document.getElementById('aluno-metodo').value;
             const status = document.getElementById('aluno-status').value;
-            const notes = document.getElementById('aluno-[#notes]').value;
+            const pagamentoDate = document.getElementById('aluno-pagamento-date').value || (status === 'Pago' ? todayStr : '');
+            const notes = document.getElementById('aluno-notes').value;
             const editId = document.getElementById('aluno-editing-id').value;
 
             try {
                 if (editId) {
-                    await updateDoc(doc(db, "alunos", editId), { nome, valor, vencimento, metodo, status, notes });
+                    await updateDoc(doc(db, "alunos", editId), { 
+                        nome, valorHora, horas, totalValor, vencimentoDate, metodo, status, pagamentoDate, notes 
+                    });
                     cancelAlunoEdit();
                 } else {
-                    await addDoc(collection(db, "alunos"), { nome, valor, vencimento, metodo, status, notes, createdAt: Date.now() });
+                    await addDoc(collection(db, "alunos"), { 
+                        nome, valorHora, horas, totalValor, vencimentoDate, metodo, status, pagamentoDate, notes, 
+                        createdAt: Date.now(),
+                        createdDate: todayStr
+                    });
                     alunoForm.reset();
+                    document.getElementById('aluno-vencimento-date').value = todayStr;
+                    calculateTotalAluno();
                 }
             } catch (err) { console.error("Erro ao salvar aluno:", err); }
         });
 
-        window.startEditAluno = function(id, nome, valor, vencimento, metodo, status, notes) {
+        window.startEditAluno = function(id, nome, valorHora, horas, vencimentoDate, metodo, status, pagamentoDate, notes) {
             document.getElementById('aluno-editing-id').value = id;
             document.getElementById('aluno-nome').value = nome;
-            document.getElementById('aluno-valor').value = valor;
-            document.getElementById('aluno-vencimento').value = vencimento;
+            document.getElementById('aluno-valor-hora').value = valorHora;
+            document.getElementById('aluno-horas').value = horas;
+            document.getElementById('aluno-vencimento-date').value = vencimentoDate;
             document.getElementById('aluno-metodo').value = metodo;
             document.getElementById('aluno-status').value = status;
-            document.getElementById('aluno-[#notes]').value = notes || '';
+            document.getElementById('aluno-pagamento-date').value = pagamentoDate || '';
+            document.getElementById('aluno-notes').value = notes || '';
+
+            calculateTotalAluno();
 
             document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-pen"></i> Editar Aluno`;
             document.getElementById('aluno-submit-btn').innerText = "Atualizar Aluno";
@@ -545,85 +625,137 @@
         window.cancelAlunoEdit = function() {
             document.getElementById('aluno-editing-id').value = "";
             alunoForm.reset();
-            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Aluno / Mensalidade`;
+            document.getElementById('aluno-vencimento-date').value = todayStr;
+            calculateTotalAluno();
+            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Aluno & Aulas`;
             document.getElementById('aluno-submit-btn').innerText = "Salvar Aluno";
             document.getElementById('cancel-aluno-btn').classList.add('hidden');
         }
 
         window.toggleStatusAluno = async function(id, currentStatus) {
             const nextStatus = currentStatus === 'Pago' ? 'Pendente' : 'Pago';
-            await updateDoc(doc(db, "alunos", id), { status: nextStatus });
+            const payDate = nextStatus === 'Pago' ? todayStr : '';
+            await updateDoc(doc(db, "alunos", id), { status: nextStatus, pagamentoDate: payDate });
         }
 
         window.deleteAluno = async function(id) { await deleteDoc(doc(db, "alunos", id)); }
 
-        onSnapshot(query(collection(db, "alunos"), orderBy("nome", "asc")), (snapshot) => {
-            const grid = document.getElementById('alunos-grid');
-            grid.innerHTML = '';
-
+        onSnapshot(query(collection(db, "alunos")), (snapshot) => {
+            alunosDataCache = [];
             let totalPrevisto = 0;
             let totalPago = 0;
             let totalPendente = 0;
             let countAtrasado = 0;
 
-            if (snapshot.empty) {
-                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno cadastrado ainda.</p>`;
-            }
-
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
+                alunosDataCache.push({ id, ...data });
 
-                totalPrevisto += data.valor || 0;
-                if (data.status === 'Pago') totalPago += data.valor || 0;
-                else if (data.status === 'Pendente') totalPendente += data.valor || 0;
+                const totalVal = data.totalValor || 0;
+                totalPrevisto += totalVal;
+                if (data.status === 'Pago') totalPago += totalVal;
+                else if (data.status === 'Pendente') totalPendente += totalVal;
                 else if (data.status === 'Atrasado') {
-                    totalPendente += data.valor || 0;
+                    totalPendente += totalVal;
                     countAtrasado++;
                 }
-
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
-                card.style.backgroundColor = "#262626";
-
-                const badgeStatus = data.status === 'Pago' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' :
-                                    data.status === 'Atrasado' ? 'bg-rose-950 text-rose-300 border-rose-800 animate-pulse' : 'bg-amber-950 text-amber-300 border-amber-800';
-
-                const safeNome = data.nome.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome}</h3>
-                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${data.status}</span>
-                        </div>
-                        <div class="text-sm space-y-1 text-[#D8B4D9]">
-                            <p><strong class="text-white">Valor:</strong> R$ ${(data.valor || 0).toFixed(2)}</p>
-                            <p><strong class="text-white">Vencimento:</strong> Todo dia ${data.vencimento}</p>
-                            <p><strong class="text-white">Método:</strong> ${data.metodo}</p>
-                            ${data.notes ? `<p class="text-xs text-neutral-400 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${data.notes}</p>` : ''}
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
-                        <button onclick="toggleStatusAluno('${id}', '${data.status}')" class="text-xs px-3 py-1.5 rounded font-medium ${data.status === 'Pago' ? 'bg-amber-900/60 text-amber-200 hover:bg-amber-800' : 'bg-emerald-900/60 text-emerald-200 hover:bg-emerald-800'} transition">
-                            ${data.status === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
-                        </button>
-                        <div class="flex gap-2 text-xs">
-                            <button onclick="startEditAluno('${id}', '${safeNome}', ${data.valor}, ${data.vencimento}, '${data.metodo}', '${data.status}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
             });
 
             document.getElementById('stat-total').innerText = `R$ ${totalPrevisto.toFixed(2)}`;
             document.getElementById('stat-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
             document.getElementById('stat-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
             document.getElementById('stat-atrasado').innerText = `${countAtrasado} Aluno(s)`;
+
+            renderAlunosList();
         });
+
+        window.renderAlunosList = function() {
+            const grid = document.getElementById('alunos-grid');
+            const sortBy = document.getElementById('sort-alunos').value;
+            grid.innerHTML = '';
+
+            if (alunosDataCache.length === 0) {
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno cadastrado ainda.</p>`;
+                return;
+            }
+
+            const sorted = [...alunosDataCache].sort((a, b) => {
+                if (sortBy === 'status') {
+                    const order = { 'Atrasado': 1, 'Pendente': 2, 'Pago': 3 };
+                    return (order[a.status] || 99) - (order[b.status] || 99);
+                } else if (sortBy === 'vencimento') {
+                    return (a.vencimentoDate || '').localeCompare(b.vencimentoDate || '');
+                } else if (sortBy === 'pagamento') {
+                    return (b.pagamentoDate || '').localeCompare(a.pagamentoDate || '');
+                } else {
+                    return (b.createdAt || 0) - (a.createdAt || 0);
+                }
+            });
+
+            sorted.forEach((data) => {
+                const id = data.id;
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
+                card.style.backgroundColor = "#262626";
+
+                const badgeStatus = data.status === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
+                                    data.status === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
+
+                const safeNome = (data.nome || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2 border-b border-[#6B3A7E]/50 pb-2">
+                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome}</h3>
+                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${data.status}</span>
+                        </div>
+                        
+                        <div class="text-xs space-y-1.5 text-[#D8B4D9]">
+                            <div class="flex justify-between">
+                                <span class="text-neutral-400">Hora × Sessões:</span>
+                                <span>R$ ${(data.valorHora || 0).toFixed(2)} × ${data.horas || 0}h</span>
+                            </div>
+                            <div class="flex justify-between font-bold text-[#F48FB1] text-sm">
+                                <span>Total Mensal:</span>
+                                <span>R$ ${(data.totalValor || 0).toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-neutral-400">Vencimento:</span>
+                                <span>${formatDateDisplay(data.vencimentoDate)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-neutral-400">Método:</span>
+                                <span>${data.metodo}</span>
+                            </div>
+                            ${data.pagamentoDate ? `
+                            <div class="flex justify-between text-emerald-400">
+                                <span>Pago em:</span>
+                                <span>\${formatDateDisplay(data.pagamentoDate)}</span>
+                            </div>` : ''}
+                            <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
+                                <span>Adicionado em:</span>
+                                <span>${formatDateDisplay(data.createdDate || '')}</span>
+                            </div>
+
+                            ${data.notes ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${data.notes}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
+                        <button onclick="toggleStatusAluno('${id}', '${data.status}')" class="text-xs px-3 py-1.5 rounded font-medium ${data.status === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
+                            ${data.status === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                        </button>
+                        <div class="flex gap-2 text-xs">
+                            <button onclick="startEditAluno('${id}', '${safeNome}', ${data.valorHora}, ${data.horas}, '${data.vencimentoDate}', '${data.metodo}', '${data.status}', '${data.pagamentoDate || ''}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
         // BLOCO DE NOTAS
         const noteForm = document.getElementById('note-form');
