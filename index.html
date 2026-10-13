@@ -45,6 +45,8 @@
         <!-- Abas de Navegação -->
         <div class="max-w-6xl mx-auto px-4 flex gap-4 border-b border-[#6B3A7E] overflow-x-auto">
             <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-4 py-2 font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition whitespace-nowrap">To-Do List</button>
+            <button onclick="switchTab('archive')" id="btn-archive" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Arquivo 📦</button>
+            <button onclick="switchTab('alunos')" id="btn-alunos" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Alunos & Pagamentos 💰</button>
             <button onclick="switchTab('notes')" id="btn-notes" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Bloco de Notas</button>
             <button onclick="switchTab('links')" id="btn-links" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Links Úteis</button>
             <button onclick="switchTab('agenda')" id="btn-agenda" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Google Agenda</button>
@@ -112,7 +114,87 @@
             </div>
         </div>
 
-        <!-- ABA 2: BLOCO DE NOTAS -->
+        <!-- ABA ARQUIVO -->
+        <div id="tab-archive" class="tab-content hidden space-y-6">
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
+                <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive"></i> Arquivo de Dias & Tarefas Concluídas
+                </h2>
+                <p class="text-sm text-[#D8B4D9]/70 mt-1">Aqui ficam armazenados os dias arquivados para manter sua To-Do List limpa.</p>
+            </div>
+            <div id="archived-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <p class="text-neutral-400 italic col-span-full">Nenhum dia arquivado ainda.</p>
+            </div>
+        </div>
+
+        <!-- ABA ALUNOS & PAGAMENTOS -->
+        <div id="tab-alunos" class="tab-content hidden space-y-6">
+            <!-- Métricas Financeiras -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
+                    <span class="text-xs text-[#D8B4D9]/70">Total Previsto no Mês</span>
+                    <p id="stat-total" class="text-2xl font-bold text-[#F48FB1] mt-1">R\$ 0,00</p>
+                </div>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-emerald-900">
+                    <span class="text-xs text-emerald-400">Total Recebido</span>
+                    <p id="stat-pago" class="text-2xl font-bold text-emerald-400 mt-1">R\$ 0,00</p>
+                </div>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-amber-900">
+                    <span class="text-xs text-amber-300">A Receber / Pendente</span>
+                    <p id="stat-pendente" class="text-2xl font-bold text-amber-300 mt-1">R\$ 0,00</p>
+                </div>
+                <div style="background-color: #262626;" class="p-4 rounded-xl border border-rose-900">
+                    <span class="text-xs text-rose-400">Cobranças Atrasadas</span>
+                    <p id="stat-atrasado" class="text-2xl font-bold text-rose-400 mt-1">0 Alunos</p>
+                </div>
+            </div>
+
+            <!-- Formulário de Adicionar/Editar Aluno -->
+            <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 id="aluno-form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Registrar Aluno / Mensalidade
+                    </h2>
+                    <button id="cancel-aluno-btn" onclick="cancelAlunoEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
+                </div>
+
+                <form id="aluno-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <input type="hidden" id="aluno-editing-id" value="">
+                    
+                    <input type="text" id="aluno-nome" placeholder="Nome do Aluno(a)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                    
+                    <input type="number" step="0.01" id="aluno-valor" placeholder="Valor (R\$)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+
+                    <input type="number" min="1" max="31" id="aluno-vencimento" placeholder="Dia Vencimento (ex: 10)" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+
+                    <select id="aluno-metodo" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <option value="Pix">Pix</option>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartão">Cartão</option>
+                        <option value="Transferência">Transferência</option>
+                    </select>
+
+                    <select id="aluno-status" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <option value="Pendente">🟡 Pendente</option>
+                        <option value="Pago">🟢 Pago</option>
+                        <option value="Atrasado">🔴 Atrasado</option>
+                    </select>
+
+                    <input type="text" id="aluno-[#notes]" placeholder="Observações (ex: repor aula dia 12)" class="sm:col-span-2 lg:col-span-2 px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+
+                    <button type="submit" id="aluno-submit-btn" style="background-color: #6B0F1A;" class="sm:col-span-2 lg:col-span-1 hover:bg-[#801320] text-white px-6 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">
+                        Salvar Aluno
+                    </button>
+                </form>
+            </div>
+
+            <!-- Grade de Alunos -->
+            <div id="alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <p class="text-neutral-400 italic col-span-full">Carregando dados dos alunos...</p>
+            </div>
+        </div>
+
+        <!-- ABA BLOCO DE NOTAS -->
         <div id="tab-notes" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
                 <h2 class="text-xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-note-sticky"></i> Criar / Editar Nota</h2>
@@ -125,9 +207,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="notes-grid"></div>
         </div>
 
-        <!-- ABA 3: LINKS ÚTEIS -->
+        <!-- ABA LINKS ÚTEIS -->
         <div id="tab-links" class="tab-content hidden space-y-6">
-            <!-- Formulário de Adicionar Link -->
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
                 <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
                     <i class="fa-solid fa-link"></i> Adicionar Novo Link Útil
@@ -151,13 +232,12 @@
                 </form>
             </div>
 
-            <!-- Grade de Links Agrupados por Categoria -->
             <div id="links-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <p class="text-neutral-400 italic col-span-full">Carregando links...</p>
             </div>
         </div>
 
-        <!-- ABA 4: GOOGLE AGENDA -->
+        <!-- ABA GOOGLE AGENDA -->
         <div id="tab-agenda" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-[#6B3A7E] pb-3">
@@ -177,7 +257,7 @@
     <!-- Firebase SDKs via CDN -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, setDoc, getDocs, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
@@ -191,11 +271,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Define data atual
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('todo-date').value = todayStr;
 
-        // Alternar seção de urgentes
         window.toggleUrgentSection = function() {
             const content = document.getElementById('urgent-section-content');
             const icon = document.getElementById('urgent-toggle-icon');
@@ -203,7 +281,6 @@
             icon.classList.toggle('rotate-180');
         }
 
-        // Alternar abas
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
@@ -216,7 +293,7 @@
             activeBtn.classList.remove('text-[#D8B4D9]/70');
         }
 
-        // Submeter formulário de Tarefa (Criar ou Editar)
+        // TO-DO LIST & ARQUIVO
         const todoForm = document.getElementById('todo-form');
         todoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -228,13 +305,11 @@
 
             try {
                 if (editId) {
-                    await updateDoc(doc(db, "todos", editId), {
-                        text, category, dueDate, isUrgent
-                    });
+                    await updateDoc(doc(db, "todos", editId), { text, category, dueDate, isUrgent });
                     cancelEdit();
                 } else {
                     await addDoc(collection(db, "todos"), { 
-                        text, category, dueDate, isUrgent, completed: false, createdAt: Date.now() 
+                        text, category, dueDate, isUrgent, completed: false, archived: false, createdAt: Date.now() 
                     });
                     todoForm.reset();
                     document.getElementById('todo-date').value = todayStr;
@@ -242,18 +317,15 @@
             } catch (err) { console.error("Erro ao salvar tarefa:", err); }
         });
 
-        // Preparar edição de tarefa
         window.startEditTodo = function(id, text, category, dueDate, isUrgent) {
             document.getElementById('editing-id').value = id;
             document.getElementById('todo-text').value = text;
             document.getElementById('todo-category').value = category;
             document.getElementById('todo-date').value = dueDate;
             document.getElementById('todo-urgent').checked = isUrgent;
-
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editar Tarefa`;
             document.getElementById('submit-btn').innerText = "Atualizar Tarefa";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -273,46 +345,63 @@
             return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${day}/${month}/${year}`;
         }
 
-        // Renderizar To-Do List e Urgentes
+        // Arquivar todos do dia
+        window.archiveDay = async function(dateKey, itemsJson) {
+            const items = JSON.parse(decodeURIComponent(itemsJson));
+            for (const item of items) {
+                await updateDoc(doc(db, "todos", item.id), { archived: true });
+            }
+        }
+
+        // Desarquivar dia
+        window.unarchiveDay = async function(itemsJson) {
+            const items = JSON.parse(decodeURIComponent(itemsJson));
+            for (const item of items) {
+                await updateDoc(doc(db, "todos", item.id), { archived: false });
+            }
+        }
+
         onSnapshot(query(collection(db, "todos"), orderBy("dueDate", "asc")), (snapshot) => {
             const container = document.getElementById('todos-by-date-container');
+            const archiveContainer = document.getElementById('archived-container');
             const urgentList = document.getElementById('urgent-list');
             const urgentBadge = document.getElementById('urgent-badge');
             
             container.innerHTML = '';
+            archiveContainer.innerHTML = '';
             urgentList.innerHTML = '';
 
             let urgentCount = 0;
 
-            if (snapshot.empty) {
-                container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa agendada.</p>`;
-                urgentBadge.innerText = '0';
-                return;
-            }
-
-            const grouped = {};
+            const activeGrouped = {};
+            const archivedGrouped = {};
 
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
                 const dateKey = data.dueDate || todayStr;
 
-                if (!grouped[dateKey]) grouped[dateKey] = [];
-                grouped[dateKey].push({ id, ...data });
+                if (data.archived) {
+                    if (!archivedGrouped[dateKey]) archivedGrouped[dateKey] = [];
+                    archivedGrouped[dateKey].push({ id, ...data });
+                } else {
+                    if (!activeGrouped[dateKey]) activeGrouped[dateKey] = [];
+                    activeGrouped[dateKey].push({ id, ...data });
 
-                if (data.isUrgent && !data.completed) {
-                    urgentCount++;
-                    const uLi = document.createElement('li');
-                    uLi.className = "flex items-center justify-between p-2 bg-[#261015] rounded border border-rose-800/60 text-sm";
-                    uLi.innerHTML = `
-                        <div class="flex items-center gap-2 truncate">
-                            <input type="checkbox" onchange="toggleTodo('${id}', true)" class="rounded bg-[#1A1A1A] border-rose-600 text-rose-600">
-                            <span class="text-rose-200 font-medium truncate">${data.text}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded border border-rose-700 bg-rose-950 text-rose-300">${data.category}</span>
-                        </div>
-                        <span class="text-xs text-rose-400/80">${data.dueDate}</span>
-                    `;
-                    urgentList.appendChild(uLi);
+                    if (data.isUrgent && !data.completed) {
+                        urgentCount++;
+                        const uLi = document.createElement('li');
+                        uLi.className = "flex items-center justify-between p-2 bg-[#261015] rounded border border-rose-800/60 text-sm";
+                        uLi.innerHTML = `
+                            <div class="flex items-center gap-2 truncate">
+                                <input type="checkbox" onchange="toggleTodo('${id}', true)" class="rounded bg-[#1A1A1A] border-rose-600 text-rose-600">
+                                <span class="text-rose-200 font-medium truncate">${data.text}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded border border-rose-700 bg-rose-950 text-rose-300">${data.category}</span>
+                            </div>
+                            <span class="text-xs text-rose-400/80">${data.dueDate}</span>
+                        `;
+                        urgentList.appendChild(uLi);
+                    }
                 }
             });
 
@@ -321,61 +410,222 @@
                 urgentList.innerHTML = `<p class="text-xs text-rose-300/60 italic">Nenhuma tarefa urgente pendente.</p>`;
             }
 
-            Object.keys(grouped).sort().forEach(dateKey => {
-                const dayCard = document.createElement('div');
-                dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
-                dayCard.style.backgroundColor = "#262626";
+            // Ativos
+            if (Object.keys(activeGrouped).length === 0) {
+                container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa ativa agendada.</p>`;
+            } else {
+                Object.keys(activeGrouped).sort().forEach(dateKey => {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
+                    dayCard.style.backgroundColor = "#262626";
 
-                const isToday = dateKey === todayStr;
-                const headerColor = isToday ? "text-[#F48FB1]" : "text-[#D8B4D9]";
-                const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2">Hoje</span>` : '';
+                    const isToday = dateKey === todayStr;
+                    const headerColor = isToday ? "text-[#F48FB1]" : "text-[#D8B4D9]";
+                    const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2">Hoje</span>` : '';
+                    
+                    const encodedItems = encodeURIComponent(JSON.stringify(activeGrouped[dateKey]));
 
-                dayCard.innerHTML = `
-                    <h3 class="font-title text-lg ${headerColor} border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
-                        <span>${formatDateHeader(dateKey)}</span>
-                        ${badgeTag}
-                    </h3>
-                    <ul class="space-y-2" id="list-${dateKey}"></ul>
-                `;
-
-                container.appendChild(dayCard);
-                const listEl = dayCard.querySelector(`#list-${dateKey}`);
-
-                grouped[dateKey].forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
-
-                    const categoryColors = item.category === 'CaZinha' ? 'text-amber-300 border-amber-900' :
-                                           item.category === 'Aulas' ? 'text-cyan-300 border-cyan-900' : 'text-pink-300 border-pink-900';
-
-                    const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                    li.innerHTML = `
-                        <div class="flex items-center gap-2 flex-grow overflow-hidden">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
-                            <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">
-                                ${item.isUrgent ? '🚨 ' : ''}${item.text}
-                            </span>
+                    dayCard.innerHTML = `
+                        <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                            <h3 class="font-title text-lg ${headerColor} flex items-center">
+                                <span>${formatDateHeader(dateKey)}</span>
+                                ${badgeTag}
+                            </h3>
+                            <button onclick="archiveDay('${dateKey}', '${encodedItems}')" title="Arquivar este dia" class="text-xs text-[#D8B4D9]/60 hover:text-[#F48FB1] transition"><i class="fa-solid fa-box-archive"></i> Arquivar</button>
                         </div>
-                        <div class="flex items-center gap-1.5 ml-2">
-                            <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
-                            <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '${item.dueDate}', ${item.isUrgent || false})" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+                        <ul class="space-y-2" id="list-${dateKey}"></ul>
                     `;
-                    listEl.appendChild(li);
+
+                    container.appendChild(dayCard);
+                    const listEl = dayCard.querySelector(`#list-${dateKey}`);
+
+                    activeGrouped[dateKey].forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
+                        const categoryColors = item.category === 'CaZinha' ? 'text-amber-300 border-amber-900' :
+                                               item.category === 'Aulas' ? 'text-cyan-300 border-cyan-900' : 'text-pink-300 border-pink-900';
+                        const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                        li.innerHTML = `
+                            <div class="flex items-center gap-2 flex-grow overflow-hidden">
+                                <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                                <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">
+                                    ${item.isUrgent ? '🚨 ' : ''}${item.text}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5 ml-2">
+                                <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
+                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '${item.dueDate}', ${item.isUrgent || false})" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        `;
+                        listEl.appendChild(li);
+                    });
                 });
-            });
+            }
+
+            // Arquivados
+            if (Object.keys(archivedGrouped).length === 0) {
+                archiveContainer.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum dia arquivado ainda.</p>`;
+            } else {
+                Object.keys(archivedGrouped).sort().reverse().forEach(dateKey => {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]/60 opacity-80 hover:opacity-100 transition";
+                    dayCard.style.backgroundColor = "#221926";
+
+                    const encodedItems = encodeURIComponent(JSON.stringify(archivedGrouped[dateKey]));
+
+                    dayCard.innerHTML = `
+                        <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                            <h3 class="font-title text-lg text-[#D8B4D9]">
+                                <span>${formatDateHeader(dateKey)}</span>
+                            </h3>
+                            <button onclick="unarchiveDay('${encodedItems}')" title="Desarquivar" class="text-xs text-[#F48FB1] hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
+                        </div>
+                        <ul class="space-y-2" id="arch-list-${dateKey}"></ul>
+                    `;
+
+                    archiveContainer.appendChild(dayCard);
+                    const listEl = dayCard.querySelector(`#arch-list-${dateKey}`);
+
+                    archivedGrouped[dateKey].forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center justify-between p-2 bg-[#1A1A1A] rounded text-xs text-[#D8B4D9]/70";
+                        li.innerHTML = `
+                            <span class="${item.completed ? 'line-through' : ''}">${item.text}</span>
+                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                });
+            }
         });
 
-        window.toggleTodo = async (id, status) => {
-            await updateDoc(doc(db, "todos", id), { completed: status });
-        }
-        window.deleteTodo = async (id) => {
-            await deleteDoc(doc(db, "todos", id));
+        window.toggleTodo = async (id, status) => { await updateDoc(doc(db, "todos", id), { completed: status }); }
+        window.deleteTodo = async (id) => { await deleteDoc(doc(db, "todos", id)); }
+
+        // ABA ALUNOS & PAGAMENTOS
+        const alunoForm = document.getElementById('aluno-form');
+        alunoForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('aluno-nome').value;
+            const valor = parseFloat(document.getElementById('aluno-valor').value) || 0;
+            const vencimento = parseInt(document.getElementById('aluno-vencimento').value) || 1;
+            const metodo = document.getElementById('aluno-metodo').value;
+            const status = document.getElementById('aluno-status').value;
+            const notes = document.getElementById('aluno-[#notes]').value;
+            const editId = document.getElementById('aluno-editing-id').value;
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, "alunos", editId), { nome, valor, vencimento, metodo, status, notes });
+                    cancelAlunoEdit();
+                } else {
+                    await addDoc(collection(db, "alunos"), { nome, valor, vencimento, metodo, status, notes, createdAt: Date.now() });
+                    alunoForm.reset();
+                }
+            } catch (err) { console.error("Erro ao salvar aluno:", err); }
+        });
+
+        window.startEditAluno = function(id, nome, valor, vencimento, metodo, status, notes) {
+            document.getElementById('aluno-editing-id').value = id;
+            document.getElementById('aluno-nome').value = nome;
+            document.getElementById('aluno-valor').value = valor;
+            document.getElementById('aluno-vencimento').value = vencimento;
+            document.getElementById('aluno-metodo').value = metodo;
+            document.getElementById('aluno-status').value = status;
+            document.getElementById('aluno-[#notes]').value = notes || '';
+
+            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-pen"></i> Editar Aluno`;
+            document.getElementById('aluno-submit-btn').innerText = "Atualizar Aluno";
+            document.getElementById('cancel-aluno-btn').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Bloco de Notas
+        window.cancelAlunoEdit = function() {
+            document.getElementById('aluno-editing-id').value = "";
+            alunoForm.reset();
+            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Aluno / Mensalidade`;
+            document.getElementById('aluno-submit-btn').innerText = "Salvar Aluno";
+            document.getElementById('cancel-aluno-btn').classList.add('hidden');
+        }
+
+        window.toggleStatusAluno = async function(id, currentStatus) {
+            const nextStatus = currentStatus === 'Pago' ? 'Pendente' : 'Pago';
+            await updateDoc(doc(db, "alunos", id), { status: nextStatus });
+        }
+
+        window.deleteAluno = async function(id) { await deleteDoc(doc(db, "alunos", id)); }
+
+        onSnapshot(query(collection(db, "alunos"), orderBy("nome", "asc")), (snapshot) => {
+            const grid = document.getElementById('alunos-grid');
+            grid.innerHTML = '';
+
+            let totalPrevisto = 0;
+            let totalPago = 0;
+            let totalPendente = 0;
+            let countAtrasado = 0;
+
+            if (snapshot.empty) {
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno cadastrado ainda.</p>`;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                totalPrevisto += data.valor || 0;
+                if (data.status === 'Pago') totalPago += data.valor || 0;
+                else if (data.status === 'Pendente') totalPendente += data.valor || 0;
+                else if (data.status === 'Atrasado') {
+                    totalPendente += data.valor || 0;
+                    countAtrasado++;
+                }
+
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
+                card.style.backgroundColor = "#262626";
+
+                const badgeStatus = data.status === 'Pago' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' :
+                                    data.status === 'Atrasado' ? 'bg-rose-950 text-rose-300 border-rose-800 animate-pulse' : 'bg-amber-950 text-amber-300 border-amber-800';
+
+                const safeNome = data.nome.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome}</h3>
+                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${data.status}</span>
+                        </div>
+                        <div class="text-sm space-y-1 text-[#D8B4D9]">
+                            <p><strong class="text-white">Valor:</strong> R$ ${(data.valor || 0).toFixed(2)}</p>
+                            <p><strong class="text-white">Vencimento:</strong> Todo dia ${data.vencimento}</p>
+                            <p><strong class="text-white">Método:</strong> ${data.metodo}</p>
+                            ${data.notes ? `<p class="text-xs text-neutral-400 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${data.notes}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
+                        <button onclick="toggleStatusAluno('${id}', '${data.status}')" class="text-xs px-3 py-1.5 rounded font-medium ${data.status === 'Pago' ? 'bg-amber-900/60 text-amber-200 hover:bg-amber-800' : 'bg-emerald-900/60 text-emerald-200 hover:bg-emerald-800'} transition">
+                            ${data.status === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                        </button>
+                        <div class="flex gap-2 text-xs">
+                            <button onclick="startEditAluno('${id}', '${safeNome}', ${data.valor}, ${data.vencimento}, '${data.metodo}', '${data.status}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            document.getElementById('stat-total').innerText = `R$ ${totalPrevisto.toFixed(2)}`;
+            document.getElementById('stat-pago').innerText = `R$ ${totalPago.toFixed(2)}`;
+            document.getElementById('stat-pendente').innerText = `R$ ${totalPendente.toFixed(2)}`;
+            document.getElementById('stat-atrasado').innerText = `${countAtrasado} Aluno(s)`;
+        });
+
+        // BLOCO DE NOTAS
         const noteForm = document.getElementById('note-form');
         noteForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -408,11 +658,9 @@
             });
         });
 
-        window.deleteNote = async (id) => {
-            await deleteDoc(doc(db, "notes", id));
-        }
+        window.deleteNote = async (id) => { await deleteDoc(doc(db, "notes", id)); }
 
-        // LÓGICA DA ABA LINKS ÚTEIS
+        // LINKS ÚTEIS
         const linkForm = document.getElementById('link-form');
         linkForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -484,9 +732,7 @@
             });
         });
 
-        window.deleteLink = async (id) => {
-            await deleteDoc(doc(db, "links", id));
-        }
+        window.deleteLink = async (id) => { await deleteDoc(doc(db, "links", id)); }
     </script>
 </body>
 </html>
