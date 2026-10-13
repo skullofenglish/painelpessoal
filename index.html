@@ -705,6 +705,12 @@
                 const safeNome = (data.nome || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
+                // Formatando as datas em variáveis seguras
+                const vencimentoFormatado = formatDateDisplay(data.vencimentoDate);
+                const pagamentoFormatado = data.pagamentoDate ? formatDateDisplay(data.pagamentoDate) : '';
+                const criadoFormatado = formatDateDisplay(data.createdDate);
+                const notasTexto = data.notes || '';
+
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-2 border-b border-[#6B3A7E]/50 pb-2">
@@ -723,23 +729,23 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-neutral-400">Vencimento:</span>
-                                <span>${formatDateDisplay(data.vencimentoDate)}</span>
+                                <span>${vencimentoFormatado}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-neutral-400">Método:</span>
                                 <span>${data.metodo}</span>
                             </div>
-                            ${data.pagamentoDate ? `
+                            ${pagamentoFormatado ? `
                             <div class="flex justify-between text-emerald-400">
                                 <span>Pago em:</span>
-                                <span>\${formatDateDisplay(data.pagamentoDate)}</span>
+                                <span>\${pagamentoFormatado}</span>
                             </div>` : ''}
                             <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
                                 <span>Adicionado em:</span>
-                                <span>${formatDateDisplay(data.createdDate || '')}</span>
+                                <span>${criadoFormatado}</span>
                             </div>
 
-                            ${data.notes ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${data.notes}</p>` : ''}
+                            ${notasTexto ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${notasTexto}</p>` : ''}
                         </div>
                     </div>
 
