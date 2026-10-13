@@ -393,17 +393,27 @@
         }
 
         function formatDateHeader(dateString) {
-            if (!dateString) return '';
-            const [year, month, day] = dateString.split('-');
+            if (!dateString || typeof dateString !== 'string') return '';
+            const parts = dateString.split('-');
+            if (parts.length !== 3) return dateString;
+            const [year, month, day] = parts;
             const dateObj = new Date(year, month - 1, day);
             const weekday = dateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
             return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)}, ${day}/${month}/${year}`;
         }
 
-        function formatDateDisplay(dateString) {
-            if (!dateString) return 'Não informada';
-            const [year, month, day] = dateString.split('-');
-            return `${day}/${month}/${year}`;
+        function formatDateDisplay(val) {
+            if (!val) return 'Não informada';
+            if (typeof val === 'number') {
+                return new Date(val).toLocaleDateString('pt-BR');
+            }
+            if (typeof val === 'string' && val.includes('-')) {
+                const parts = val.split('-');
+                if (parts.length === 3) {
+                    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+            }
+            return String(val);
         }
 
         window.archiveDay = async function(dateKey, itemsJson) {
@@ -605,12 +615,12 @@
 
         window.startEditAluno = function(id, nome, valorHora, horas, vencimentoDate, metodo, status, pagamentoDate, notes) {
             document.getElementById('aluno-editing-id').value = id;
-            document.getElementById('aluno-nome').value = nome;
-            document.getElementById('aluno-valor-hora').value = valorHora;
-            document.getElementById('aluno-horas').value = horas;
-            document.getElementById('aluno-vencimento-date').value = vencimentoDate;
-            document.getElementById('aluno-metodo').value = metodo;
-            document.getElementById('aluno-status').value = status;
+            document.getElementById('aluno-nome').value = nome || '';
+            document.getElementById('aluno-valor-hora').value = valorHora || 0;
+            document.getElementById('aluno-horas').value = horas || 0;
+            document.getElementById('aluno-vencimento-date').value = vencimentoDate || todayStr;
+            document.getElementById('aluno-metodo').value = metodo || 'Pix';
+            document.getElementById('aluno-status').value = status || 'Pendente';
             document.getElementById('aluno-pagamento-date').value = pagamentoDate || '';
             document.getElementById('aluno-notes').value = notes || '';
 
@@ -650,14 +660,25 @@
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
-                alunosDataCache.push({ id, ...data });
+                
+                // Trata retrocompatibilidade para dados antigos
+                const valTotal = data.totalValor || data.valor || 0;
+                const vHora = data.valorHora || (data.valor ? data.valor / (data.horas || 1) : 0);
+                const hrs = data.horas || 1;
 
-                const totalVal = data.totalValor || 0;
-                totalPrevisto += totalVal;
-                if (data.status === 'Pago') totalPago += totalVal;
-                else if (data.status === 'Pendente') totalPendente += totalVal;
+                alunosDataCache.push({ 
+                    id, 
+                    ...data,
+                    totalValor: valTotal,
+                    valorHora: vHora,
+                    horas: hrs
+                });
+
+                totalPrevisto += valTotal;
+                if (data.status === 'Pago') totalPago += valTotal;
+                else if (data.status === 'Pendente') totalPendente += valTotal;
                 else if (data.status === 'Atrasado') {
-                    totalPendente += totalVal;
+                    totalPendente += valTotal;
                     countAtrasado++;
                 }
             });
@@ -685,9 +706,9 @@
                     const order = { 'Atrasado': 1, 'Pendente': 2, 'Pago': 3 };
                     return (order[a.status] || 99) - (order[b.status] || 99);
                 } else if (sortBy === 'vencimento') {
-                    return (a.vencimentoDate || '').localeCompare(b.vencimentoDate || '');
+                    return String(a.vencimentoDate || a.vencimento || '').localeCompare(String(b.vencimentoDate || b.vencimento || ''));
                 } else if (sortBy === 'pagamento') {
-                    return (b.pagamentoDate || '').localeCompare(a.pagamentoDate || '');
+                    return String(b.pagamentoDate || '').localeCompare(String(a.pagamentoDate || ''));
                 } else {
                     return (b.createdAt || 0) - (a.createdAt || 0);
                 }
@@ -699,23 +720,23 @@
                 card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
                 card.style.backgroundColor = "#262626";
 
-                const badgeStatus = data.status === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
-                                    data.status === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
+                const statusVal = data.status || 'Pendente';
+                const badgeStatus = statusVal === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
+                                    statusVal === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
 
                 const safeNome = (data.nome || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-                // Formatando as datas em variáveis seguras
-                const vencimentoFormatado = formatDateDisplay(data.vencimentoDate);
-                const pagamentoFormatado = data.pagamentoDate ? formatDateDisplay(data.pagamentoDate) : '';
-                const criadoFormatado = formatDateDisplay(data.createdDate);
-                const notasTexto = data.notes || '';
+                const vencimentoTxt = formatDateDisplay(data.vencimentoDate || data.vencimento);
+                const pagamentoTxt = data.pagamentoDate ? formatDateDisplay(data.pagamentoDate) : '';
+                const criadoTxt = formatDateDisplay(data.createdDate || data.createdAt);
+                const observacaoTxt = data.notes || '';
 
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-2 border-b border-[#6B3A7E]/50 pb-2">
-                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome}</h3>
-                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${data.status}</span>
+                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
+                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${statusVal}</span>
                         </div>
                         
                         <div class="text-xs space-y-1.5 text-[#D8B4D9]">
@@ -729,32 +750,32 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-neutral-400">Vencimento:</span>
-                                <span>${vencimentoFormatado}</span>
+                                <span>${vencimentoTxt}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-neutral-400">Método:</span>
-                                <span>${data.metodo}</span>
+                                <span>${data.metodo || 'Pix'}</span>
                             </div>
-                            ${pagamentoFormatado ? `
+                            ${pagamentoTxt ? `
                             <div class="flex justify-between text-emerald-400">
                                 <span>Pago em:</span>
-                                <span>\${pagamentoFormatado}</span>
+                                <span>\${pagamentoTxt}</span>
                             </div>` : ''}
                             <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
                                 <span>Adicionado em:</span>
-                                <span>${criadoFormatado}</span>
+                                <span>${criadoTxt}</span>
                             </div>
 
-                            ${notasTexto ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${notasTexto}</p>` : ''}
+                            ${observacaoTxt ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${observacaoTxt}</p>` : ''}
                         </div>
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
-                        <button onclick="toggleStatusAluno('${id}', '${data.status}')" class="text-xs px-3 py-1.5 rounded font-medium ${data.status === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
-                            ${data.status === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                        <button onclick="toggleStatusAluno('${id}', '${statusVal}')" class="text-xs px-3 py-1.5 rounded font-medium ${statusVal === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
+                            ${statusVal === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
                         </button>
                         <div class="flex gap-2 text-xs">
-                            <button onclick="startEditAluno('${id}', '${safeNome}', ${data.valorHora}, ${data.horas}, '${data.vencimentoDate}', '${data.metodo}', '${data.status}', '${data.pagamentoDate || ''}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="startEditAluno('${id}', '${safeNome}', ${data.valorHora || 0}, ${data.horas || 0}, '${data.vencimentoDate || ''}', '${data.metodo || 'Pix'}', '${statusVal}', '${data.pagamentoDate || ''}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
