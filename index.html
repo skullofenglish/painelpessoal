@@ -403,7 +403,7 @@
         }
 
         function formatDateDisplay(val) {
-            if (!val) return 'Não informada';
+            if (!val) return '';
             if (typeof val === 'number') {
                 return new Date(val).toLocaleDateString('pt-BR');
             }
@@ -569,7 +569,7 @@
         window.toggleTodo = async (id, status) => { await updateDoc(doc(db, "todos", id), { completed: status }); }
         window.deleteTodo = async (id) => { await deleteDoc(doc(db, "todos", id)); }
 
-        // ABA ALUNOS & PAGAMENTOS (Formatação Monetária, Cálculos, Datas, Ordenação)
+        // ABA ALUNOS & PAGAMENTOS
         let alunosDataCache = [];
 
         window.formatCurrencyInput = function(input) {
@@ -606,7 +606,7 @@
             const vencimentoDate = document.getElementById('aluno-vencimento-date').value;
             const metodo = document.getElementById('aluno-metodo').value;
             const status = document.getElementById('aluno-status').value;
-            const pagamentoDate = document.getElementById('aluno-pagamento-date').value || (status === 'Pago' ? todayStr : '');
+            const pagamentoDate = document.getElementById('aluno-pagamento-date').value || '';
             const notes = document.getElementById('aluno-notes').value;
             const editId = document.getElementById('aluno-editing-id').value;
 
@@ -733,10 +733,6 @@
 
             sorted.forEach((data) => {
                 const id = data.id;
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
-                card.style.backgroundColor = "#262626";
-
                 const statusVal = data.status || 'Pendente';
                 const badgeStatus = statusVal === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
                                     statusVal === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
@@ -745,11 +741,27 @@
                 const safeNotes = (data.notes || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
                 const vencimentoTxt = formatDateDisplay(data.vencimentoDate || data.vencimento);
-                const pagamentoTxt = data.pagamentoDate ? formatDateDisplay(data.pagamentoDate) : '';
+                const rawPagamento = data.pagamentoDate || (statusVal === 'Pago' ? (data.createdDate || todayStr) : '');
+                const pagamentoTxt = formatDateDisplay(rawPagamento);
                 const criadoTxt = formatDateDisplay(data.createdDate || data.createdAt);
                 const observacaoTxt = data.notes || '';
                 const valorHoraNum = data.valorHora || 0;
                 const totalValNum = data.totalValor || 0;
+
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
+                card.style.backgroundColor = "#262626";
+
+                // Montagem limpa do HTML separando blocos condicionais sem conflitos de aspas
+                let pagamentoHtml = '';
+                if (pagamentoTxt) {
+                    pagamentoHtml = `<div class="flex justify-between text-emerald-400"><span>Pago em:</span><span>${pagamentoTxt}</span></div>`;
+                }
+
+                let observacaoHtml = '';
+                if (observacaoTxt) {
+                    observacaoHtml = `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">${observacaoTxt}</p>`;
+                }
 
                 card.innerHTML = `
                     <div>
@@ -775,17 +787,12 @@
                                 <span class="text-neutral-400">Método:</span>
                                 <span>${data.metodo || 'Pix'}</span>
                             </div>
-                            ${pagamentoTxt ? `
-                            <div class="flex justify-between text-emerald-400">
-                                <span>Pago em:</span>
-                                <span>\${pagamentoTxt}</span>
-                            </div>` : ''}
+                            ${pagamentoHtml}
                             <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
                                 <span>Adicionado em:</span>
                                 <span>${criadoTxt}</span>
                             </div>
-
-                            ${observacaoTxt ? `<p class="text-xs text-[#D8B4D9]/80 italic mt-2 bg-[#1A1A1A] p-2 rounded border border-[#6B3A7E]/30">\${observacaoTxt}</p>` : ''}
+                            ${observacaoHtml}
                         </div>
                     </div>
 
