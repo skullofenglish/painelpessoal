@@ -661,7 +661,6 @@
                 const data = docSnap.data();
                 const id = docSnap.id;
                 
-                // Trata retrocompatibilidade para dados antigos
                 const valTotal = data.totalValor || data.valor || 0;
                 const vHora = data.valorHora || (data.valor ? data.valor / (data.horas || 1) : 0);
                 const hrs = data.horas || 1;
