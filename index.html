@@ -27,6 +27,14 @@
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
         }
+        /* Ocultar barra de rolagem feia mantendo a funcionalidade se precisar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -42,18 +50,18 @@
                 <span id="status-text">Sincronizado na Nuvem</span>
             </div>
         </div>
-        <!-- Abas de Navegação -->
-        <div class="max-w-6xl mx-auto px-4 flex gap-4 border-b border-[#6B3A7E] overflow-x-auto">
-            <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-4 py-2 font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition whitespace-nowrap">To-Do List</button>
-            <button onclick="switchTab('archive')" id="btn-archive" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Arquivo 📦</button>
-            <button onclick="switchTab('alunos')" id="btn-alunos" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Alunos & Pagamentos 💰</button>
+        <!-- Abas de Navegação (Com quebra automática ou rolagem limpa sem barra feia) -->
+        <div class="max-w-6xl mx-auto px-4 flex flex-wrap gap-2 sm:gap-4 border-b border-[#6B3A7E] py-2">
+            <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-3 py-1.5 text-sm font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition whitespace-nowrap">To-Do List</button>
+            <button onclick="switchTab('archive')" id="btn-archive" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Arquivo 📦</button>
+            <button onclick="switchTab('alunos')" id="btn-alunos" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Alunos & Pagamentos 💰</button>
             <!-- Botão/Aba Direto para a Chamada -->
-            <a href="chamada.html" class="px-4 py-2 font-medium text-[#F48FB1] hover:text-white transition whitespace-nowrap flex items-center gap-1.5 border-b-2 border-transparent hover:border-[#F48FB1]">
+            <a href="chamada.html" class="px-3 py-1.5 text-sm font-medium text-[#F48FB1] hover:text-white transition whitespace-nowrap flex items-center gap-1.5 border-b-2 border-transparent hover:border-[#F48FB1]">
                 <i class="fa-solid fa-clipboard-user text-xs"></i> Chamada & Presença 📋
             </a>
-            <button onclick="switchTab('notes')" id="btn-notes" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Bloco de Notas</button>
-            <button onclick="switchTab('links')" id="btn-links" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Links Úteis</button>
-            <button onclick="switchTab('agenda')" id="btn-agenda" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Google Agenda</button>
+            <button onclick="switchTab('notes')" id="btn-notes" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Bloco de Notas</button>
+            <button onclick="switchTab('links')" id="btn-links" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Links Úteis</button>
+            <button onclick="switchTab('agenda')" id="btn-agenda" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Google Agenda</button>
         </div>
     </header>
 
