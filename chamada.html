@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chamada & Presença de Alunos</title>
+
+    <!-- 🌙 FAVICON GÓTICO -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Pinyon Script -->
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        .font-title {
+            font-family: 'Pinyon Script', cursive, sans-serif;
+        }
+        body {
+            font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+            background-color: #1A1A1A;
+            color: #D8B4D9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header com Botão Home -->
+    <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-4">
+                <!-- Botão Home / Voltar -->
+                <a href="index.html" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-3 py-1.5 rounded-lg text-sm font-medium transition border border-[#F48FB1]/30 flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Voltar à Agenda
+                </a>
+                <h1 class="text-4xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
+                    Controle de Chamada & Presença
+                </h1>
+            </div>
+            
+            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full flex items-center gap-1 border border-[#F48FB1]/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Sincronizado na Nuvem</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- Banner Explicativo Simples -->
+        <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+                <h2 class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-user text-base"></i> Cartões de Frequência das Aulas
+                </h2>
+                <p class="text-xs text-[#D8B4D9]/80 mt-1">
+                    Clique nas bolinhas das sessões para alternar entre: 
+                    <span class="text-emerald-400 font-bold">🟢 Dada</span> | 
+                    <span class="text-rose-400 font-bold">🔴 Falta</span> | 
+                    <span class="text-amber-300 font-bold">🟡 Remarcada</span> | 
+                    <span class="text-neutral-400">⚪ Pendente</span>
+                </p>
+            </div>
+            
+            <div class="text-xs text-[#D8B4D9]/60 italic bg-[#1A1A1A] px-3 py-2 rounded-lg border border-[#6B3A7E]/30">
+                Data de Hoje: <span id="current-date-display" class="text-[#F48FB1] font-bold"></span>
+            </div>
+        </div>
+
+        <!-- Grade de Chamada de Alunos -->
+        <div id="chamada-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p class="text-neutral-400 italic col-span-full">Carregando alunos para chamada...</p>
+        </div>
+
+    </main>
+
+    <!-- Firebase SDKs via CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
+            authDomain: "painelpessoal-ab165.firebaseapp.com",
+            projectId: "painelpessoal-ab165",
+            storageBucket: "painelpessoal-ab165.firebasestorage.app",
+            messagingSenderId: "113043267624",
+            appId: "1:113043267624:web:b2d40daac28c3a55a4951d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        document.getElementById('current-date-display').innerText = today.toLocaleDateString('pt-BR');
+
+        function formatDateDisplay(val) {
+            if (!val) return '';
+            if (typeof val === 'string' && val.includes('-')) {
+                const parts = val.split('-');
+                if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+            return String(val);
+        }
+
+        window.toggleStatusAluno = async function(id, currentStatus) {
+            const nextStatus = currentStatus === 'Pago' ? 'Pendente' : 'Pago';
+            const payDate = nextStatus === 'Pago' ? todayStr : '';
+            await updateDoc(doc(db, "alunos", id), { status: nextStatus, pagamentoDate: payDate });
+        };
+
+        window.cycleAulaStatus = async function(alunoId, totalSessoes, index, currentAulas) {
+            const statusOrder = ['Pendente', 'Dada', 'Falta', 'Remarcada'];
+            let aulasArray = currentAulas ? [...currentAulas] : Array(totalSessoes).fill(null).map(() => ({ status: 'Pendente', dePara: '' }));
+
+            if (!aulasArray[index]) aulasArray[index] = { status: 'Pendente', dePara: '' };
+
+            const currStatus = aulasArray[index].status || 'Pendente';
+            const nextIdx = (statusOrder.indexOf(currStatus) + 1) % statusOrder.length;
+            const newStatus = statusOrder[nextIdx];
+
+            aulasArray[index].status = newStatus;
+
+            if (newStatus !== 'Remarcada') {
+                aulasArray[index].dePara = '';
+            }
+
+            await updateDoc(doc(db, "alunos", alunoId), { aulasPresenca: aulasArray });
+        };
+
+        window.saveDeParaNote = async function(alunoId, index, currentAulas, inputEl) {
+            let aulasArray = currentAulas ? [...currentAulas] : [];
+            if (!aulasArray[index]) return;
+            
+            aulasArray[index].dePara = inputEl.value;
+            await updateDoc(doc(db, "alunos", alunoId), { aulasPresenca: aulasArray });
+        };
+
+        onSnapshot(query(collection(db, "alunos")), (snapshot) => {
+            const grid = document.getElementById('chamada-grid');
+            grid.innerHTML = '';
+
+            if (snapshot.empty) {
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno registado no sistema.</p>`;
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                const sessoesCount = parseInt(data.horas) || 1;
+                const statusPag = data.status || 'Pendente';
+                const badgePag = statusPag === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
+                                 statusPag === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
+
+                const pagamentoTxt = data.pagamentoDate ? formatDateDisplay(data.pagamentoDate) : '';
+
+                let aulasPresenca = data.aulasPresenca || [];
+                while (aulasPresenca.length < sessoesCount) {
+                    aulasPresenca.push({ status: 'Pendente', dePara: '' });
+                }
+
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between space-y-4";
+                card.style.backgroundColor = "#262626";
+
+                let aulasHtml = '';
+                let dadasCount = 0;
+
+                aulasPresenca.slice(0, sessoesCount).forEach((aula, idx) => {
+                    const st = aula.status || 'Pendente';
+                    if (st === 'Dada') dadasCount++;
+
+                    let iconColor = 'text-neutral-500 fa-circle-dot';
+                    let statusLabel = 'Pendente';
+
+                    if (st === 'Dada') {
+                        iconColor = 'text-emerald-400 fa-circle-check';
+                        statusLabel = 'Dada / Presente';
+                    } else if (st === 'Falta') {
+                        iconColor = 'text-rose-400 fa-circle-xmark';
+                        statusLabel = 'Falta';
+                    } else if (st === 'Remarcada') {
+                        iconColor = 'text-amber-400 fa-clock';
+                        statusLabel = 'Remarcada';
+                    }
+
+                    const safeAulasJson = encodeURIComponent(JSON.stringify(aulasPresenca));
+
+                    aulasHtml += `
+                        <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-[#D8B4D9]">Aula ${idx + 1} de ${sessoesCount}</span>
+                                <button onclick="cycleAulaStatus('${id}', ${sessoesCount}, ${idx}, JSON.parse(decodeURIComponent('${safeAulasJson}')))" 
+                                        class="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[#262626] border border-[#6B3A7E] hover:border-[#F48FB1] transition">
+                                    <i class="fa-solid ${iconColor} text-sm"></i>
+                                    <span>${statusLabel}</span>
+                                </button>
+                            </div>
+
+                            ${st === 'Remarcada' ? `
+                                <div class="pt-1">
+                                    <label class="text-[10px] text-amber-300 block mb-0.5">Remarcada (De / Para):</label>
+                                    <input type="text" 
+                                           value="${aula.dePara || ''}" 
+                                           placeholder="ex: De 10/10 para 14/10 às 15h" 
+                                           onchange="saveDeParaNote('${id}', ${idx}, JSON.parse(decodeURIComponent('${safeAulasJson}')), this)"
+                                           class="w-full text-xs px-2 py-1 bg-[#262626] border border-amber-900/60 text-amber-200 rounded focus:outline-none focus:ring-1 focus:ring-amber-400">
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+
+                const alertaConcluido = (dadasCount === sessoesCount && statusPag !== 'Pago') ? `
+                    <div class="p-2 bg-[#6B0F1A]/50 border border-rose-500/50 rounded-lg text-xs text-rose-200 text-center animate-pulse">
+                        💡 Todas as ${sessoesCount} aulas foram dadas! Lembre-se de confirmar o pagamento.
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2">
+                            <div>
+                                <h3 class="font-title text-3xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
+                                <span class="text-xs text-[#D8B4D9]/70">${sessoesCount} aula(s) contratada(s)</span>
+                            </div>
+                            <span class="text-xs px-2 py-0.5 rounded border ${badgePag}">${statusPag}</span>
+                        </div>
+
+                        ${alertaConcluido}
+
+                        <div class="space-y-2 pt-1">
+                            ${aulasHtml}
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-[#6B3A7E]/40 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="text-neutral-400 block text-[10px]">Status Financeiro:</span>
+                            <span class="font-bold ${statusPag === 'Pago' ? 'text-emerald-400' : 'text-amber-300'}">
+                                ${statusPag === 'Pago' ? `Pago em ${pagamentoTxt}` : `R$ ${(data.totalValor || 0).toFixed(2).replace('.', ',')} Pendente`}
+                            </span>
+                        </div>
+
+                        <button onclick="toggleStatusAluno('${id}', '${statusPag}')" class="px-3 py-1.5 rounded font-medium ${statusPag === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
+                            ${statusPag === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        });
+    </script>
+</body>
+</html>
