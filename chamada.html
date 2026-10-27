@@ -24,6 +24,9 @@
             background-color: #1A1A1A;
             color: #D8B4D9;
         }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -58,11 +61,7 @@
                     <i class="fa-solid fa-clipboard-user text-base"></i> Cartões de Frequência das Aulas
                 </h2>
                 <p class="text-xs text-[#D8B4D9]/80 mt-1">
-                    Clique nas bolinhas das sessões para alternar entre: 
-                    <span class="text-emerald-400 font-bold">🟢 Dada</span> | 
-                    <span class="text-rose-400 font-bold">🔴 Falta</span> | 
-                    <span class="text-amber-300 font-bold">🟡 Remarcada</span> | 
-                    <span class="text-neutral-400">⚪ Pendente</span>
+                    Selecione o status diretamente no menu e informe a data opcional da aula realizada ou remarcada.
                 </p>
             </div>
             
@@ -114,25 +113,36 @@
             await updateDoc(doc(db, "alunos", id), { status: nextStatus, pagamentoDate: payDate });
         };
 
-        window.cycleAulaStatus = async function(alunoId, totalSessoes, index, currentAulas) {
-            const statusOrder = ['Pendente', 'Dada', 'Falta', 'Remarcada'];
-            let aulasArray = currentAulas ? [...currentAulas] : Array(totalSessoes).fill(null).map(() => ({ status: 'Pendente', dePara: '' }));
+        // Atualizar Status via Dropdown
+        window.updateAulaStatus = async function(alunoId, totalSessoes, index, currentAulas, selectEl) {
+            const newStatus = selectEl.value;
+            let aulasArray = currentAulas ? [...currentAulas] : Array(totalSessoes).fill(null).map(() => ({ status: 'Pendente', dataAula: '', dePara: '' }));
 
-            if (!aulasArray[index]) aulasArray[index] = { status: 'Pendente', dePara: '' };
-
-            const currStatus = aulasArray[index].status || 'Pendente';
-            const nextIdx = (statusOrder.indexOf(currStatus) + 1) % statusOrder.length;
-            const newStatus = statusOrder[nextIdx];
+            if (!aulasArray[index]) aulasArray[index] = { status: 'Pendente', dataAula: '', dePara: '' };
 
             aulasArray[index].status = newStatus;
 
-            if (newStatus !== 'Remarcada') {
+            // Se mudar para Pendente, limpa dados extras
+            if (newStatus === 'Pendente') {
+                aulasArray[index].dataAula = '';
                 aulasArray[index].dePara = '';
+            } else if (!aulasArray[index].dataAula) {
+                aulasArray[index].dataAula = todayStr; // Atribui hoje por defeito se estiver vazia
             }
 
             await updateDoc(doc(db, "alunos", alunoId), { aulasPresenca: aulasArray });
         };
 
+        // Salvar Data Específica da Aula
+        window.saveAulaDate = async function(alunoId, index, currentAulas, inputEl) {
+            let aulasArray = currentAulas ? [...currentAulas] : [];
+            if (!aulasArray[index]) return;
+            
+            aulasArray[index].dataAula = inputEl.value;
+            await updateDoc(doc(db, "alunos", alunoId), { aulasPresenca: aulasArray });
+        };
+
+        // Salvar nota "De / Para" quando a aula for remarcada
         window.saveDeParaNote = async function(alunoId, index, currentAulas, inputEl) {
             let aulasArray = currentAulas ? [...currentAulas] : [];
             if (!aulasArray[index]) return;
@@ -163,7 +173,7 @@
 
                 let aulasPresenca = data.aulasPresenca || [];
                 while (aulasPresenca.length < sessoesCount) {
-                    aulasPresenca.push({ status: 'Pendente', dePara: '' });
+                    aulasPresenca.push({ status: 'Pendente', dataAula: '', dePara: '' });
                 }
 
                 const card = document.createElement('div');
@@ -176,34 +186,37 @@
                 aulasPresenca.slice(0, sessoesCount).forEach((aula, idx) => {
                     const st = aula.status || 'Pendente';
                     if (st === 'Dada') dadasCount++;
-
-                    let iconColor = 'text-neutral-500 fa-circle-dot';
-                    let statusLabel = 'Pendente';
-
-                    if (st === 'Dada') {
-                        iconColor = 'text-emerald-400 fa-circle-check';
-                        statusLabel = 'Dada / Presente';
-                    } else if (st === 'Falta') {
-                        iconColor = 'text-rose-400 fa-circle-xmark';
-                        statusLabel = 'Falta';
-                    } else if (st === 'Remarcada') {
-                        iconColor = 'text-amber-400 fa-clock';
-                        statusLabel = 'Remarcada';
-                    }
+                    const aulaDateVal = aula.dataAula || todayStr;
 
                     const safeAulasJson = encodeURIComponent(JSON.stringify(aulasPresenca));
 
                     aulasHtml += `
                         <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-[#D8B4D9]">Aula ${idx + 1} de ${sessoesCount}</span>
-                                <button onclick="cycleAulaStatus('${id}', ${sessoesCount}, ${idx}, JSON.parse(decodeURIComponent('${safeAulasJson}')))" 
-                                        class="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md bg-[#262626] border border-[#6B3A7E] hover:border-[#F48FB1] transition">
-                                    <i class="fa-solid ${iconColor} text-sm"></i>
-                                    <span>${statusLabel}</span>
-                                </button>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs font-semibold text-[#D8B4D9] whitespace-nowrap">Aula ${idx + 1} de ${sessoesCount}</span>
+                                
+                                <!-- Dropdown de Status -->
+                                <select onchange="updateAulaStatus('${id}', ${sessoesCount}, ${idx}, JSON.parse(decodeURIComponent('${safeAulasJson}')), this)"
+                                        class="text-xs px-2 py-1 bg-[#262626] border border-[#6B3A7E] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                                    <option value="Pendente" ${st === 'Pendente' ? 'selected' : ''}>⚪ Pendente</option>
+                                    <option value="Dada" ${st === 'Dada' ? 'selected' : ''}>🟢 Dada / Presente</option>
+                                    <option value="Falta" ${st === 'Falta' ? 'selected' : ''}>🔴 Falta</option>
+                                    <option value="Remarcada" ${st === 'Remarcada' ? 'selected' : ''}>🟡 Remarcada</option>
+                                </select>
                             </div>
 
+                            <!-- Campo de Data da Aula (visível se não estiver pendente) -->
+                            ${st !== 'Pendente' ? `
+                                <div class="flex items-center gap-2 pt-1">
+                                    <label class="text-[10px] text-neutral-400 whitespace-nowrap">Data da aula:</label>
+                                    <input type="date" 
+                                           value="${aulaDateVal}" 
+                                           onchange="saveAulaDate('${id}', ${idx}, JSON.parse(decodeURIComponent('${safeAulasJson}')), this)"
+                                           class="w-full text-xs px-2 py-1 bg-[#262626] border border-[#6B3A7E] text-white rounded focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                                </div>
+                            ` : ''}
+
+                            <!-- Campo De/Para caso seja Remarcada -->
                             ${st === 'Remarcada' ? `
                                 <div class="pt-1">
                                     <label class="text-[10px] text-amber-300 block mb-0.5">Remarcada (De / Para):</label>
