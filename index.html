@@ -13,11 +13,11 @@
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Fonte Pinyon Script via Google Fonts -->
+    <!-- Google Fonts: Pinyon Script -->
     <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
     <style>
         .font-title {
-            font-family: 'Pinyon Script', cursive;
+            font-family: 'Pinyon Script', cursive, sans-serif;
         }
         body {
             font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
@@ -47,6 +47,10 @@
             <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-4 py-2 font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition whitespace-nowrap">To-Do List</button>
             <button onclick="switchTab('archive')" id="btn-archive" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Arquivo 📦</button>
             <button onclick="switchTab('alunos')" id="btn-alunos" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Alunos & Pagamentos 💰</button>
+            <!-- Botão/Aba Direto para a Chamada -->
+            <a href="chamada.html" class="px-4 py-2 font-medium text-[#F48FB1] hover:text-white transition whitespace-nowrap flex items-center gap-1.5 border-b-2 border-transparent hover:border-[#F48FB1]">
+                <i class="fa-solid fa-clipboard-user text-xs"></i> Chamada & Presença 📋
+            </a>
             <button onclick="switchTab('notes')" id="btn-notes" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Bloco de Notas</button>
             <button onclick="switchTab('links')" id="btn-links" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Links Úteis</button>
             <button onclick="switchTab('agenda')" id="btn-agenda" class="tab-btn px-4 py-2 font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Google Agenda</button>
@@ -60,8 +64,8 @@
         <div id="tab-todo" class="tab-content space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
                 <div class="flex justify-between items-center">
-                    <h2 id="form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
-                        <i class="fa-solid fa-list-check"></i> Adicionar Nova Tarefa
+                    <h2 id="form-title" class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-base"></i> Adicionar Nova Tarefa
                     </h2>
                     <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
                 </div>
@@ -98,7 +102,7 @@
             <div style="background-color: #33131A;" class="rounded-xl shadow-lg border border-rose-900/60 overflow-hidden">
                 <button onclick="toggleUrgentSection()" class="w-full p-4 flex items-center justify-between text-left hover:bg-rose-950/40 transition">
                     <div class="flex items-center gap-2">
-                        <span class="text-rose-400 font-title text-xl">🚨 Tarefas Urgentes</span>
+                        <span class="text-rose-400 font-title text-2xl">🚨 Tarefas Urgentes</span>
                         <span id="urgent-badge" class="text-xs bg-rose-900 text-rose-200 px-2 py-0.5 rounded-full border border-rose-700">0</span>
                     </div>
                     <i id="urgent-toggle-icon" class="fa-solid fa-chevron-down text-rose-400 transition-transform"></i>
@@ -117,8 +121,8 @@
         <!-- ABA ARQUIVO -->
         <div id="tab-archive" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
-                <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
-                    <i class="fa-solid fa-box-archive"></i> Arquivo de Dias & Tarefas Concluídas
+                <h2 class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-base"></i> Arquivo de Dias & Tarefas Concluídas
                 </h2>
                 <p class="text-sm text-[#D8B4D9]/70 mt-1">Aqui ficam armazenados os dias arquivados para manter sua To-Do List limpa.</p>
             </div>
@@ -133,15 +137,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
                     <span class="text-xs text-[#D8B4D9]/70">Total Previsto no Mês</span>
-                    <p id="stat-total" class="text-2xl font-bold text-[#F48FB1] mt-1">R\$ 0,00</p>
+                    <p id="stat-total" class="text-2xl font-bold text-[#F48FB1] mt-1">R$ 0,00</p>
                 </div>
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
                     <span class="text-xs text-[#F48FB1]">Total Recebido</span>
-                    <p id="stat-pago" class="text-2xl font-bold text-[#F48FB1] mt-1">R\$ 0,00</p>
+                    <p id="stat-pago" class="text-2xl font-bold text-[#F48FB1] mt-1">R$ 0,00</p>
                 </div>
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
                     <span class="text-xs text-[#D8B4D9]">A Receber / Pendente</span>
-                    <p id="stat-pendente" class="text-2xl font-bold text-[#D8B4D9] mt-1">R\$ 0,00</p>
+                    <p id="stat-pendente" class="text-2xl font-bold text-[#D8B4D9] mt-1">R$ 0,00</p>
                 </div>
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B0F1A]">
                     <span class="text-xs text-rose-300">Cobranças Atrasadas</span>
@@ -151,11 +155,16 @@
 
             <!-- Formulário de Registro / Edição de Aluno -->
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
-                <div class="flex justify-between items-center border-b border-[#6B3A7E] pb-2">
-                    <h2 id="aluno-form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
-                        <i class="fa-solid fa-user-plus"></i> Registrar Aluno & Aulas
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#6B3A7E] pb-2 gap-2">
+                    <h2 id="aluno-form-title" class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-base"></i> Registrar Aluno & Aulas
                     </h2>
-                    <button id="cancel-aluno-btn" onclick="cancelAlunoEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
+                    <div class="flex items-center gap-3">
+                        <a href="chamada.html" style="background-color: #6B0F1A;" class="text-xs text-white px-3 py-1 rounded-lg border border-[#F48FB1]/30 hover:bg-[#801320] transition flex items-center gap-1">
+                            <i class="fa-solid fa-clipboard-user"></i> Ir para Controle de Chamada 📋
+                        </a>
+                        <button id="cancel-aluno-btn" onclick="cancelAlunoEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
+                    </div>
                 </div>
 
                 <form id="aluno-form" class="space-y-4">
@@ -168,8 +177,8 @@
                         </div>
 
                         <div>
-                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Valor por Hora (R\$)</label>
-                            <input type="text" id="aluno-valor-hora" placeholder="R\$ 0,00" oninput="formatCurrencyInput(this); calculateTotalAluno();" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                            <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Valor por Hora (R$)</label>
+                            <input type="text" id="aluno-valor-hora" placeholder="R$ 0,00" oninput="formatCurrencyInput(this); calculateTotalAluno();" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                         </div>
 
                         <div>
@@ -178,8 +187,8 @@
                         </div>
 
                         <div>
-                            <label class="text-xs text-[#F48FB1] font-semibold mb-1 block">Total Calculado (R\$)</label>
-                            <input type="text" id="aluno-total-display" readonly value="R\$ 0,00" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-[#F48FB1] font-bold rounded-lg focus:outline-none cursor-not-allowed">
+                            <label class="text-xs text-[#F48FB1] font-semibold mb-1 block">Total Calculado (R$)</label>
+                            <input type="text" id="aluno-total-display" readonly value="R$ 0,00" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-[#F48FB1] font-bold rounded-lg focus:outline-none cursor-not-allowed">
                         </div>
                     </div>
 
@@ -226,8 +235,8 @@
 
             <!-- Filtros e Ordenação de Alunos -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-[#262626] p-3 rounded-xl border border-[#6B3A7E]/40">
-                <span class="text-sm text-[#F48FB1] font-title text-lg flex items-center gap-2">
-                    <i class="fa-solid fa-users"></i> Lista de Alunos
+                <span class="text-[#F48FB1] font-title text-2xl flex items-center gap-2">
+                    <i class="fa-solid fa-users text-sm"></i> Lista de Alunos
                 </span>
                 
                 <div class="flex items-center gap-2">
@@ -250,7 +259,7 @@
         <!-- ABA BLOCO DE NOTAS -->
         <div id="tab-notes" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40">
-                <h2 class="text-xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-note-sticky"></i> Criar / Editar Nota</h2>
+                <h2 class="text-2xl font-title text-[#F48FB1] mb-3 flex items-center gap-2"><i class="fa-solid fa-note-sticky text-base"></i> Criar / Editar Nota</h2>
                 <form id="note-form" class="space-y-3">
                     <input type="text" id="note-title" placeholder="Título da Nota" required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                     <textarea id="note-body" rows="4" placeholder="Escreva sua nota aqui..." required class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]"></textarea>
@@ -263,8 +272,8 @@
         <!-- ABA LINKS ÚTEIS -->
         <div id="tab-links" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
-                <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
-                    <i class="fa-solid fa-link"></i> Adicionar Novo Link Útil
+                <h2 class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                    <i class="fa-solid fa-link text-base"></i> Adicionar Novo Link Útil
                 </h2>
                 
                 <form id="link-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -294,7 +303,7 @@
         <div id="tab-agenda" class="tab-content hidden space-y-6">
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-3 border-b border-[#6B3A7E] pb-3">
-                    <h2 class="text-xl font-title text-[#F48FB1] flex items-center gap-2"><i class="fa-solid fa-calendar-days"></i> Minha Agenda do Google</h2>
+                    <h2 class="text-2xl font-title text-[#F48FB1] flex items-center gap-2"><i class="fa-solid fa-calendar-days text-base"></i> Minha Agenda do Google</h2>
                     <a href="https://calendar.google.com" target="_blank" style="background-color: #6B0F1A;" class="text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#801320] transition border border-[#F48FB1]/30 flex items-center gap-2">
                         <i class="fa-solid fa-plus"></i> Novo Evento no Google Agenda
                     </a>
@@ -377,7 +386,7 @@
             document.getElementById('todo-category').value = category;
             document.getElementById('todo-date').value = dueDate;
             document.getElementById('todo-urgent').checked = isUrgent;
-            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Editar Tarefa`;
+            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Tarefa`;
             document.getElementById('submit-btn').innerText = "Atualizar Tarefa";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -387,7 +396,7 @@
             document.getElementById('editing-id').value = "";
             todoForm.reset();
             document.getElementById('todo-date').value = todayStr;
-            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-list-check"></i> Adicionar Nova Tarefa`;
+            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-list-check text-base"></i> Adicionar Nova Tarefa`;
             document.getElementById('submit-btn').innerText = "Adicionar Tarefa";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
         }
@@ -488,12 +497,12 @@
 
                     const isToday = dateKey === todayStr;
                     const headerColor = isToday ? "text-[#F48FB1]" : "text-[#D8B4D9]";
-                    const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2">Hoje</span>` : '';
+                    const badgeTag = isToday ? `<span class="text-xs bg-[#6B0F1A] text-white px-2 py-0.5 rounded ml-2 font-sans">Hoje</span>` : '';
                     const encodedItems = encodeURIComponent(JSON.stringify(activeGrouped[dateKey]));
 
                     dayCard.innerHTML = `
                         <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
-                            <h3 class="font-title text-lg ${headerColor} flex items-center">
+                            <h3 class="font-title text-2xl ${headerColor} flex items-center">
                                 <span>${formatDateHeader(dateKey)}</span>
                                 ${badgeTag}
                             </h3>
@@ -542,7 +551,7 @@
 
                     dayCard.innerHTML = `
                         <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
-                            <h3 class="font-title text-lg text-[#D8B4D9]">
+                            <h3 class="font-title text-2xl text-[#D8B4D9]">
                                 <span>${formatDateHeader(dateKey)}</span>
                             </h3>
                             <button onclick="unarchiveDay('${encodedItems}')" title="Desarquivar" class="text-xs text-[#F48FB1] hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
@@ -584,7 +593,7 @@
 
         window.calculateTotalAluno = function() {
             const rawVal = document.getElementById('aluno-valor-hora').value;
-            const cleanVal = rawVal.replace('R\$', '').replace(/\./g, '').replace(',', '.').trim();
+            const cleanVal = rawVal.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
             const vHora = parseFloat(cleanVal) || 0;
             const horas = parseFloat(document.getElementById('aluno-horas').value) || 0;
             const total = vHora * horas;
@@ -597,7 +606,7 @@
             const nome = document.getElementById('aluno-nome').value;
             
             const rawVal = document.getElementById('aluno-valor-hora').value;
-            const cleanVal = rawVal.replace('R\$', '').replace(/\./g, '').replace(',', '.').trim();
+            const cleanVal = rawVal.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
             const valorHora = parseFloat(cleanVal) || 0;
             
             const horas = parseFloat(document.getElementById('aluno-horas').value) || 0;
@@ -644,7 +653,7 @@
 
             calculateTotalAluno();
 
-            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-pen"></i> Editar Aluno`;
+            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-pen text-base"></i> Editar Aluno`;
             document.getElementById('aluno-submit-btn').innerText = "Atualizar Aluno";
             document.getElementById('cancel-aluno-btn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -655,7 +664,7 @@
             alunoForm.reset();
             document.getElementById('aluno-vencimento-date').value = todayStr;
             calculateTotalAluno();
-            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-plus"></i> Registrar Aluno & Aulas`;
+            document.getElementById('aluno-form-title').innerHTML = `<i class="fa-solid fa-user-plus text-base"></i> Registrar Aluno & Aulas`;
             document.getElementById('aluno-submit-btn').innerText = "Salvar Aluno";
             document.getElementById('cancel-aluno-btn').classList.add('hidden');
         }
@@ -752,7 +761,6 @@
                 card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
                 card.style.backgroundColor = "#262626";
 
-                // Montagem limpa do HTML separando blocos condicionais sem conflitos de aspas
                 let pagamentoHtml = '';
                 if (pagamentoTxt) {
                     pagamentoHtml = `<div class="flex justify-between text-emerald-400"><span>Pago em:</span><span>${pagamentoTxt}</span></div>`;
@@ -766,7 +774,7 @@
                 card.innerHTML = `
                     <div>
                         <div class="flex justify-between items-start mb-2 border-b border-[#6B3A7E]/50 pb-2">
-                            <h3 class="font-title text-xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
+                            <h3 class="font-title text-3xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
                             <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${statusVal}</span>
                         </div>
                         
@@ -832,7 +840,7 @@
                 card.style.backgroundColor = "#221926";
                 card.innerHTML = `
                     <div>
-                        <h3 class="font-title text-xl text-[#F48FB1] mb-1">${data.title}</h3>
+                        <h3 class="font-title text-2xl text-[#F48FB1] mb-1">${data.title}</h3>
                         <p class="text-sm text-[#D8B4D9] whitespace-pre-wrap">${data.body}</p>
                     </div>
                     <div class="mt-4 flex justify-end">
@@ -887,8 +895,8 @@
                 catBlock.style.backgroundColor = "#262626";
 
                 catBlock.innerHTML = `
-                    <h3 class="font-title text-xl text-[#F48FB1] border-b border-[#6B3A7E] pb-2 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-bookmark text-sm"></i> ${catKey}
+                    <h3 class="font-title text-2xl text-[#F48FB1] border-b border-[#6B3A7E] pb-2 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-bookmark text-xs"></i> ${catKey}
                     </h3>
                     <div class="space-y-2.5" id="links-group-${catKey}"></div>
                 `;
@@ -905,7 +913,7 @@
                             <a href="${link.url}" target="_blank" class="font-medium text-[#F48FB1] hover:underline flex items-center gap-1.5 text-sm">
                                 <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> ${link.title}
                             </a>
-                            ${link.desc ? `<p class="text-xs text-[#D8B4D9]/70 truncate mt-0.5">\${link.desc}</p>` : ''}
+                            ${link.desc ? `<p class="text-xs text-[#D8B4D9]/70 truncate mt-0.5">${link.desc}</p>` : ''}
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="navigator.clipboard.writeText('${link.url}')" title="Copiar URL" class="text-neutral-500 hover:text-[#D8B4D9] text-xs transition"><i class="fa-solid fa-copy"></i></button>
