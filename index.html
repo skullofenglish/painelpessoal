@@ -118,18 +118,7 @@
                 </div>
             </div>
 
-            <!-- SEÇÃO TO BE CONFIRMED (SEM DATA) -->
-            <div id="tbc-card-container" class="hidden p-4 rounded-xl shadow-lg border border-[#502064]" style="background-color: #262626;">
-                <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
-                    <h3 class="font-title text-2xl text-[#F48FB1] flex items-center gap-2">
-                        <i class="fa-regular fa-clock text-sm"></i> To Be Confirmed (Sem Data)
-                    </h3>
-                    <button onclick="archiveTbcGroup()" title="Arquivar grupo TBC" class="text-xs text-[#D8B4D9]/60 hover:text-[#F48FB1] transition"><i class="fa-solid fa-box-archive"></i> Arquivar</button>
-                </div>
-                <ul class="space-y-2" id="tbc-list"></ul>
-            </div>
-
-            <!-- TAREFAS AGRUPADAS POR DATA -->
+            <!-- TAREFAS AGRUPADAS POR DATA (INCLUINDO O TBC NO FINAL) -->
             <div id="todos-by-date-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <p class="text-neutral-400 italic col-span-full">Carregando tarefas...</p>
             </div>
@@ -410,6 +399,7 @@
                     document.getElementById('todo-date').value = todayStr;
                     document.getElementById('todo-date').disabled = false;
                     document.getElementById('todo-date').classList.remove('opacity-50', 'cursor-not-allowed');
+                    document.getElementById('todo-tbc').checked = false;
                 }
             } catch (err) { console.error("Erro ao salvar tarefa:", err); }
         });
@@ -444,6 +434,7 @@
             document.getElementById('todo-date').value = todayStr;
             document.getElementById('todo-date').disabled = false;
             document.getElementById('todo-date').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('todo-tbc').checked = false;
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-list-check text-base"></i> Adicionar Nova Tarefa`;
             document.getElementById('submit-btn').innerText = "Adicionar Tarefa";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
@@ -498,13 +489,10 @@
             const archiveContainer = document.getElementById('archived-container');
             const urgentList = document.getElementById('urgent-list');
             const urgentBadge = document.getElementById('urgent-badge');
-            const tbcContainer = document.getElementById('tbc-card-container');
-            const tbcList = document.getElementById('tbc-list');
             
             container.innerHTML = '';
             archiveContainer.innerHTML = '';
             urgentList.innerHTML = '';
-            tbcList.innerHTML = '';
             tbcItemsCache = [];
 
             let urgentCount = 0;
@@ -522,16 +510,14 @@
                 } else {
                     if (data.isTbc) {
                         tbcItemsCache.push({ id, ...data });
-                        if (data.isUrgent && !data.completed) urgentCount++;
                     } else {
                         const dateKey = data.dueDate || todayStr;
                         if (!activeGrouped[dateKey]) activeGrouped[dateKey] = [];
                         activeGrouped[dateKey].push({ id, ...data });
-
-                        if (data.isUrgent && !data.completed) urgentCount++;
                     }
 
                     if (data.isUrgent && !data.completed) {
+                        urgentCount++;
                         const uLi = document.createElement('li');
                         uLi.className = "flex items-center justify-between p-2 bg-[#261015] rounded border border-rose-800/60 text-sm";
                         uLi.innerHTML = `
@@ -547,43 +533,18 @@
                 }
             });
 
-            // Renderizar Bloco TBC
-            if (tbcItemsCache.length > 0) {
-                tbcContainer.classList.remove('hidden');
-                tbcItemsCache.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
-                    const categoryColors = item.category === 'CaZinha' ? 'text-amber-300 border-amber-900' :
-                                           item.category === 'Aulas' ? 'text-cyan-300 border-cyan-900' : 'text-pink-300 border-pink-900';
-                    const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                    li.innerHTML = `
-                        <div class="flex items-center gap-2 flex-grow overflow-hidden">
-                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
-                            <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">
-                                ${item.isUrgent ? '🚨 ' : ''}${item.text}
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-1.5 ml-2">
-                            <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
-                            <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '', ${item.isUrgent || false}, true)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    `;
-                    tbcList.appendChild(li);
-                });
-            } else {
-                tbcContainer.classList.add('hidden');
-            }
-
             urgentBadge.innerText = urgentCount;
             if (urgentCount === 0) {
                 urgentList.innerHTML = `<p class="text-xs text-rose-300/60 italic">Nenhuma tarefa urgente pendente.</p>`;
             }
 
-            if (Object.keys(activeGrouped).length === 0 && tbcItemsCache.length === 0) {
+            const hasActiveDates = Object.keys(activeGrouped).length > 0;
+            const hasTbc = tbcItemsCache.length > 0;
+
+            if (!hasActiveDates && !hasTbc) {
                 container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa ativa agendada.</p>`;
             } else {
+                // 1. Renderizar os cards normais de data em ordem
                 Object.keys(activeGrouped).sort().forEach(dateKey => {
                     const dayCard = document.createElement('div');
                     dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
@@ -624,13 +585,56 @@
                             </div>
                             <div class="flex items-center gap-1.5 ml-2">
                                 <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
-                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '${item.dueDate}', ${item.isUrgent || false}, false)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '', ${item.isUrgent || false}, false)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         `;
                         listEl.appendChild(li);
                     });
                 });
+
+                // 2. Renderizar o card "To Be Confirmed" SEMPRE POR ÚLTIMO (na direita)
+                if (hasTbc) {
+                    const tbcCard = document.createElement('div');
+                    tbcCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
+                    tbcCard.style.backgroundColor = "#262626";
+
+                    tbcCard.innerHTML = `
+                        <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                            <h3 class="font-title text-2xl text-[#F48FB1] flex items-center gap-2">
+                                <i class="fa-regular fa-clock text-sm"></i> To Be Confirmed
+                            </h3>
+                            <button onclick="archiveTbcGroup()" title="Arquivar grupo TBC" class="text-xs text-[#D8B4D9]/60 hover:text-[#F48FB1] transition"><i class="fa-solid fa-box-archive"></i> Arquivar</button>
+                        </div>
+                        <ul class="space-y-2" id="tbc-list"></ul>
+                    `;
+
+                    container.appendChild(tbcCard);
+                    const tbcListEl = tbcCard.querySelector('#tbc-list');
+
+                    tbcItemsCache.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
+                        const categoryColors = item.category === 'CaZinha' ? 'text-amber-300 border-amber-900' :
+                                               item.category === 'Aulas' ? 'text-cyan-300 border-cyan-900' : 'text-pink-300 border-pink-900';
+                        const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                        li.innerHTML = `
+                            <div class="flex items-center gap-2 flex-grow overflow-hidden">
+                                <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                                <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">
+                                    ${item.isUrgent ? '🚨 ' : ''}${item.text}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5 ml-2">
+                                <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
+                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '', ${item.isUrgent || false}, true)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        `;
+                        tbcListEl.appendChild(li);
+                    });
+                }
             }
 
             if (Object.keys(archivedGrouped).length === 0) {
