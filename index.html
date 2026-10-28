@@ -27,14 +27,6 @@
         input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(1);
         }
-        /* Ocultar barra de rolagem feia mantendo a funcionalidade se precisar */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -50,12 +42,11 @@
                 <span id="status-text">Sincronizado na Nuvem</span>
             </div>
         </div>
-        <!-- Abas de Navegação (Com quebra automática ou rolagem limpa sem barra feia) -->
+        <!-- Abas de Navegação -->
         <div class="max-w-6xl mx-auto px-4 flex flex-wrap gap-2 sm:gap-4 border-b border-[#6B3A7E] py-2">
             <button onclick="switchTab('todo')" id="btn-todo" class="tab-btn px-3 py-1.5 text-sm font-medium border-b-2 border-[#F48FB1] text-[#F48FB1] transition whitespace-nowrap">To-Do List</button>
             <button onclick="switchTab('archive')" id="btn-archive" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Arquivo 📦</button>
             <button onclick="switchTab('alunos')" id="btn-alunos" class="tab-btn px-3 py-1.5 text-sm font-medium text-[#D8B4D9]/70 hover:text-white transition whitespace-nowrap">Alunos & Pagamentos 💰</button>
-            <!-- Botão/Aba Direto para a Chamada -->
             <a href="chamada.html" class="px-3 py-1.5 text-sm font-medium text-[#F48FB1] hover:text-white transition whitespace-nowrap flex items-center gap-1.5 border-b-2 border-transparent hover:border-[#F48FB1]">
                 <i class="fa-solid fa-clipboard-user text-xs"></i> Chamada & Presença 📋
             </a>
@@ -90,14 +81,21 @@
                             <option value="Aulas">Aulas</option>
                         </select>
 
-                        <input type="date" id="todo-date" required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <input type="date" id="todo-date" class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                     </div>
 
-                    <div class="flex items-center justify-between pt-1">
-                        <label class="flex items-center gap-2 cursor-pointer text-sm text-rose-400 font-medium">
-                            <input type="checkbox" id="todo-urgent" class="rounded bg-[#1A1A1A] border-rose-600 text-rose-600 focus:ring-rose-500">
-                            <span>Marcar como Urgente 🚨</span>
-                        </label>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pt-1 gap-2">
+                        <div class="flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm text-rose-400 font-medium">
+                                <input type="checkbox" id="todo-urgent" class="rounded bg-[#1A1A1A] border-rose-600 text-rose-600 focus:ring-rose-500">
+                                <span>Urgente 🚨</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer text-sm text-[#F48FB1] font-medium">
+                                <input type="checkbox" id="todo-tbc" onchange="toggleDateInput(this)" class="rounded bg-[#1A1A1A] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                                <span>To Be Confirmed (sem data)</span>
+                            </label>
+                        </div>
 
                         <button type="submit" id="submit-btn" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-6 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">
                             Adicionar Tarefa
@@ -118,6 +116,17 @@
                 <div id="urgent-section-content" class="hidden p-4 border-t border-rose-900/40 space-y-2">
                     <ul id="urgent-list" class="space-y-2"></ul>
                 </div>
+            </div>
+
+            <!-- SEÇÃO TO BE CONFIRMED (SEM DATA) -->
+            <div id="tbc-card-container" class="hidden p-4 rounded-xl shadow-lg border border-[#502064]" style="background-color: #262626;">
+                <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                    <h3 class="font-title text-2xl text-[#F48FB1] flex items-center gap-2">
+                        <i class="fa-regular fa-clock text-sm"></i> To Be Confirmed (Sem Data)
+                    </h3>
+                    <button onclick="archiveTbcGroup()" title="Arquivar grupo TBC" class="text-xs text-[#D8B4D9]/60 hover:text-[#F48FB1] transition"><i class="fa-solid fa-box-archive"></i> Arquivar</button>
+                </div>
+                <ul class="space-y-2" id="tbc-list"></ul>
             </div>
 
             <!-- TAREFAS AGRUPADAS POR DATA -->
@@ -161,7 +170,7 @@
                 </div>
             </div>
 
-            <!-- Formulário de Registro / Edição de Aluno -->
+            <!-- Formulário de Aluno -->
             <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#6B3A7E] pb-2 gap-2">
                     <h2 id="aluno-form-title" class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
@@ -241,7 +250,7 @@
                 </form>
             </div>
 
-            <!-- Filtros e Ordenação de Alunos -->
+            <!-- Filtros de Alunos -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-[#262626] p-3 rounded-xl border border-[#6B3A7E]/40">
                 <span class="text-[#F48FB1] font-title text-2xl flex items-center gap-2">
                     <i class="fa-solid fa-users text-sm"></i> Lista de Alunos
@@ -258,7 +267,6 @@
                 </div>
             </div>
 
-            <!-- Grade de Cards dos Alunos -->
             <div id="alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <p class="text-neutral-400 italic col-span-full">Carregando dados dos alunos...</p>
             </div>
@@ -345,6 +353,19 @@
         document.getElementById('todo-date').value = todayStr;
         document.getElementById('aluno-vencimento-date').value = todayStr;
 
+        window.toggleDateInput = function(checkbox) {
+            const dateInput = document.getElementById('todo-date');
+            if (checkbox.checked) {
+                dateInput.value = '';
+                dateInput.disabled = true;
+                dateInput.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                dateInput.value = todayStr;
+                dateInput.disabled = false;
+                dateInput.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
         window.toggleUrgentSection = function() {
             const content = document.getElementById('urgent-section-content');
             const icon = document.getElementById('urgent-toggle-icon');
@@ -366,34 +387,51 @@
 
         // TO-DO LIST & ARQUIVO
         const todoForm = document.getElementById('todo-form');
+        let tbcItemsCache = [];
+
         todoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = document.getElementById('todo-text').value;
             const category = document.getElementById('todo-category').value;
-            const dueDate = document.getElementById('todo-date').value;
+            const isTbc = document.getElementById('todo-tbc').checked;
+            const dueDate = isTbc ? '' : document.getElementById('todo-date').value;
             const isUrgent = document.getElementById('todo-urgent').checked;
             const editId = document.getElementById('editing-id').value;
 
             try {
                 if (editId) {
-                    await updateDoc(doc(db, "todos", editId), { text, category, dueDate, isUrgent });
+                    await updateDoc(doc(db, "todos", editId), { text, category, dueDate, isUrgent, isTbc });
                     cancelEdit();
                 } else {
                     await addDoc(collection(db, "todos"), { 
-                        text, category, dueDate, isUrgent, completed: false, archived: false, createdAt: Date.now() 
+                        text, category, dueDate, isUrgent, isTbc, completed: false, archived: false, createdAt: Date.now() 
                     });
                     todoForm.reset();
                     document.getElementById('todo-date').value = todayStr;
+                    document.getElementById('todo-date').disabled = false;
+                    document.getElementById('todo-date').classList.remove('opacity-50', 'cursor-not-allowed');
                 }
             } catch (err) { console.error("Erro ao salvar tarefa:", err); }
         });
 
-        window.startEditTodo = function(id, text, category, dueDate, isUrgent) {
+        window.startEditTodo = function(id, text, category, dueDate, isUrgent, isTbc) {
             document.getElementById('editing-id').value = id;
             document.getElementById('todo-text').value = text;
             document.getElementById('todo-category').value = category;
-            document.getElementById('todo-date').value = dueDate;
             document.getElementById('todo-urgent').checked = isUrgent;
+            document.getElementById('todo-tbc').checked = isTbc || false;
+            
+            const dateInput = document.getElementById('todo-date');
+            if (isTbc) {
+                dateInput.value = '';
+                dateInput.disabled = true;
+                dateInput.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                dateInput.value = dueDate || todayStr;
+                dateInput.disabled = false;
+                dateInput.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Tarefa`;
             document.getElementById('submit-btn').innerText = "Atualizar Tarefa";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
@@ -404,6 +442,8 @@
             document.getElementById('editing-id').value = "";
             todoForm.reset();
             document.getElementById('todo-date').value = todayStr;
+            document.getElementById('todo-date').disabled = false;
+            document.getElementById('todo-date').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-list-check text-base"></i> Adicionar Nova Tarefa`;
             document.getElementById('submit-btn').innerText = "Adicionar Tarefa";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
@@ -440,6 +480,12 @@
             }
         }
 
+        window.archiveTbcGroup = async function() {
+            for (const item of tbcItemsCache) {
+                await updateDoc(doc(db, "todos", item.id), { archived: true });
+            }
+        }
+
         window.unarchiveDay = async function(itemsJson) {
             const items = JSON.parse(decodeURIComponent(itemsJson));
             for (const item of items) {
@@ -447,15 +493,19 @@
             }
         }
 
-        onSnapshot(query(collection(db, "todos"), orderBy("dueDate", "asc")), (snapshot) => {
+        onSnapshot(query(collection(db, "todos")), (snapshot) => {
             const container = document.getElementById('todos-by-date-container');
             const archiveContainer = document.getElementById('archived-container');
             const urgentList = document.getElementById('urgent-list');
             const urgentBadge = document.getElementById('urgent-badge');
+            const tbcContainer = document.getElementById('tbc-card-container');
+            const tbcList = document.getElementById('tbc-list');
             
             container.innerHTML = '';
             archiveContainer.innerHTML = '';
             urgentList.innerHTML = '';
+            tbcList.innerHTML = '';
+            tbcItemsCache = [];
 
             let urgentCount = 0;
             const activeGrouped = {};
@@ -464,17 +514,24 @@
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
-                const dateKey = data.dueDate || todayStr;
 
                 if (data.archived) {
-                    if (!archivedGrouped[dateKey]) archivedGrouped[dateKey] = [];
-                    archivedGrouped[dateKey].push({ id, ...data });
+                    const groupKey = data.isTbc ? 'To Be Confirmed' : (data.dueDate || 'Sem Data');
+                    if (!archivedGrouped[groupKey]) archivedGrouped[groupKey] = [];
+                    archivedGrouped[groupKey].push({ id, ...data });
                 } else {
-                    if (!activeGrouped[dateKey]) activeGrouped[dateKey] = [];
-                    activeGrouped[dateKey].push({ id, ...data });
+                    if (data.isTbc) {
+                        tbcItemsCache.push({ id, ...data });
+                        if (data.isUrgent && !data.completed) urgentCount++;
+                    } else {
+                        const dateKey = data.dueDate || todayStr;
+                        if (!activeGrouped[dateKey]) activeGrouped[dateKey] = [];
+                        activeGrouped[dateKey].push({ id, ...data });
+
+                        if (data.isUrgent && !data.completed) urgentCount++;
+                    }
 
                     if (data.isUrgent && !data.completed) {
-                        urgentCount++;
                         const uLi = document.createElement('li');
                         uLi.className = "flex items-center justify-between p-2 bg-[#261015] rounded border border-rose-800/60 text-sm";
                         uLi.innerHTML = `
@@ -483,19 +540,48 @@
                                 <span class="text-rose-200 font-medium truncate">${data.text}</span>
                                 <span class="text-[10px] px-1.5 py-0.5 rounded border border-rose-700 bg-rose-950 text-rose-300">${data.category}</span>
                             </div>
-                            <span class="text-xs text-rose-400/80">${data.dueDate}</span>
+                            <span class="text-xs text-rose-400/80">${data.isTbc ? 'TBC' : data.dueDate}</span>
                         `;
                         urgentList.appendChild(uLi);
                     }
                 }
             });
 
+            // Renderizar Bloco TBC
+            if (tbcItemsCache.length > 0) {
+                tbcContainer.classList.remove('hidden');
+                tbcItemsCache.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = "flex items-center justify-between p-2.5 bg-[#1A1A1A] rounded border border-[#6B3A7E]/50 text-sm";
+                    const categoryColors = item.category === 'CaZinha' ? 'text-amber-300 border-amber-900' :
+                                           item.category === 'Aulas' ? 'text-cyan-300 border-cyan-900' : 'text-pink-300 border-pink-900';
+                    const safeText = item.text.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                    li.innerHTML = `
+                        <div class="flex items-center gap-2 flex-grow overflow-hidden">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleTodo('${item.id}', ${!item.completed})" class="rounded bg-[#262626] border-[#6B3A7E] text-[#6B0F1A] focus:ring-[#F48FB1]">
+                            <span class="${item.completed ? 'line-through text-neutral-500' : 'text-[#D8B4D9]'} truncate">
+                                ${item.isUrgent ? '🚨 ' : ''}${item.text}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-1.5 ml-2">
+                            <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
+                            <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '', ${item.isUrgent || false}, true)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    `;
+                    tbcList.appendChild(li);
+                });
+            } else {
+                tbcContainer.classList.add('hidden');
+            }
+
             urgentBadge.innerText = urgentCount;
             if (urgentCount === 0) {
                 urgentList.innerHTML = `<p class="text-xs text-rose-300/60 italic">Nenhuma tarefa urgente pendente.</p>`;
             }
 
-            if (Object.keys(activeGrouped).length === 0) {
+            if (Object.keys(activeGrouped).length === 0 && tbcItemsCache.length === 0) {
                 container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa ativa agendada.</p>`;
             } else {
                 Object.keys(activeGrouped).sort().forEach(dateKey => {
@@ -538,7 +624,7 @@
                             </div>
                             <div class="flex items-center gap-1.5 ml-2">
                                 <span class="text-[10px] px-1.5 py-0.5 border rounded ${categoryColors}">${item.category}</span>
-                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '${item.dueDate}', ${item.isUrgent || false})" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="startEditTodo('${item.id}', '${safeText}', '${item.category}', '${item.dueDate}', ${item.isUrgent || false}, false)" class="text-neutral-500 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i></button>
                                 <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         `;
@@ -560,7 +646,7 @@
                     dayCard.innerHTML = `
                         <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
                             <h3 class="font-title text-2xl text-[#D8B4D9]">
-                                <span>${formatDateHeader(dateKey)}</span>
+                                <span>${dateKey}</span>
                             </h3>
                             <button onclick="unarchiveDay('${encodedItems}')" title="Desarquivar" class="text-xs text-[#F48FB1] hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
                         </div>
