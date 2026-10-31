@@ -804,7 +804,6 @@
             await updateDoc(doc(db, "alunos", id), { archived: !currentArchivedState });
         }
 
-        // Colapsar / Expandir Card Individual de Aluno (incluindo rodapé)
         window.toggleCardCollapse = function(cardId) {
             const bodyEl = document.getElementById(`card-body-${cardId}`);
             const iconEl = document.getElementById(`card-icon-${cardId}`);
@@ -970,9 +969,9 @@
                 }
 
                 card.innerHTML = `
-                    <div class="space-y-3">
+                    <div>
                         <!-- CABEÇALHO DO CARD (Sempre visível) -->
-                        <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2">
+                        <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2 mb-3">
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
                                     <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
@@ -988,7 +987,7 @@
                         </div>
 
                         <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
-                        <div id="card-body-${id}" class="space-y-3">
+                        <div id="card-body-${id}" style="display: block;">
                             <div class="text-xs space-y-1.5 text-[#D8B4D9]">
                                 <div class="flex justify-between">
                                     <span class="text-neutral-400">Hora × Sessões:</span>
