@@ -804,12 +804,18 @@
             await updateDoc(doc(db, "alunos", id), { archived: !currentArchivedState });
         }
 
+        // Colapsar / Expandir Card Individual de Aluno (incluindo rodapé)
         window.toggleCardCollapse = function(cardId) {
             const bodyEl = document.getElementById(`card-body-${cardId}`);
             const iconEl = document.getElementById(`card-icon-${cardId}`);
             if (bodyEl && iconEl) {
-                bodyEl.classList.toggle('hidden');
-                iconEl.classList.toggle('rotate-180');
+                if (bodyEl.style.display === 'none') {
+                    bodyEl.style.display = 'block';
+                    iconEl.classList.remove('rotate-180');
+                } else {
+                    bodyEl.style.display = 'none';
+                    iconEl.classList.add('rotate-180');
+                }
             }
         };
 
