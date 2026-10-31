@@ -130,12 +130,14 @@
             icon.classList.toggle('rotate-180');
         };
 
-        // Colapsar / Expandir Card Individual de Aluno
+        // Colapsar / Expandir Card Individual de Aluno (incluindo rodapé)
         window.toggleCardCollapse = function(cardId) {
             const bodyEl = document.getElementById(`card-body-${cardId}`);
             const iconEl = document.getElementById(`card-icon-${cardId}`);
-            bodyEl.classList.toggle('hidden');
-            iconEl.classList.toggle('rotate-180');
+            if (bodyEl && iconEl) {
+                bodyEl.classList.toggle('hidden');
+                iconEl.classList.toggle('rotate-180');
+            }
         };
 
         window.toggleStatusAluno = async function(id, currentStatus) {
@@ -219,7 +221,7 @@
                 }
 
                 const card = document.createElement('div');
-                card.className = `p-5 rounded-xl shadow-lg border ${isArchived ? 'border-[#502064]/40 opacity-75' : 'border-[#502064]'} flex flex-col justify-between space-y-4`;
+                card.className = `p-5 rounded-xl shadow-lg border ${isArchived ? 'border-[#502064]/40 opacity-75' : 'border-[#502064]'}`;
                 card.style.backgroundColor = isArchived ? "#221926" : "#262626";
 
                 let aulasHtml = '';
@@ -278,6 +280,7 @@
 
                 card.innerHTML = `
                     <div class="space-y-3">
+                        <!-- CABEÇALHO DO CARD (Sempre visível) -->
                         <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2">
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
@@ -296,26 +299,26 @@
                             </div>
                         </div>
 
-                        <!-- Conteúdo colapsável do card -->
-                        <div id="card-body-${id}" class="space-y-3">
+                        <!-- CONTEÚDO COLAPSÁVEL DO CARD (Agora inclui tudo abaixo) -->
+                        <div id="card-body-${id}" class="space-y-4">
                             ${alertaConcluido}
                             <div class="space-y-2 pt-1">
                                 ${aulasHtml}
                             </div>
-                        </div>
-                    </div>
 
-                    <div class="pt-3 border-t border-[#6B3A7E]/40 flex items-center justify-between text-xs">
-                        <div>
-                            <span class="text-neutral-400 block text-[10px]">Status Financeiro:</span>
-                            <span class="font-bold ${statusPag === 'Pago' ? 'text-emerald-400' : 'text-amber-300'}">
-                                ${statusPag === 'Pago' ? `Pago em ${pagamentoTxt}` : `R$ ${(data.totalValor || 0).toFixed(2).replace('.', ',')} Pendente`}
-                            </span>
-                        </div>
+                            <div class="pt-3 border-t border-[#6B3A7E]/40 flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="text-neutral-400 block text-[10px]">Status Financeiro:</span>
+                                    <span class="font-bold ${statusPag === 'Pago' ? 'text-emerald-400' : 'text-amber-300'}">
+                                        ${statusPag === 'Pago' ? `Pago em ${pagamentoTxt}` : `R$ ${(data.totalValor || 0).toFixed(2).replace('.', ',')} Pendente`}
+                                    </span>
+                                </div>
 
-                        <button onclick="toggleStatusAluno('${id}', '${statusPag}')" class="px-3 py-1.5 rounded font-medium ${statusPag === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
-                            ${statusPag === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
-                        </button>
+                                <button onclick="toggleStatusAluno('${id}', '${statusPag}')" class="px-3 py-1.5 rounded font-medium ${statusPag === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
+                                    ${statusPag === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
 
