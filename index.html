@@ -13,16 +13,15 @@
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts: Pinyon Script -->
+    <!-- 🌸 GOOGLE FONT: Fleur De Leah -->
     <link href="https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap" rel="stylesheet">
     <style>
         .font-title {
-    font-family: 'Fleur De Leah', cursive, sans-serif;
-    }
+            font-family: 'Fleur De Leah', cursive, sans-serif;
         }
         body {
             font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
-            background-color: #1A1A1A;
+            background-color: #1A1A1A !important;
             color: #D8B4D9;
         }
         input[type="date"]::-webkit-calendar-picker-indicator {
@@ -30,7 +29,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body style="background-color: #1A1A1A;" class="min-h-screen flex flex-col">
 
     <!-- Header -->
     <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
@@ -545,7 +544,6 @@
             if (!hasActiveDates && !hasTbc) {
                 container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma tarefa ativa agendada.</p>`;
             } else {
-                // 1. Renderizar os cards normais de data em ordem
                 Object.keys(activeGrouped).sort().forEach(dateKey => {
                     const dayCard = document.createElement('div');
                     dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
@@ -594,7 +592,6 @@
                     });
                 });
 
-                // 2. Renderizar o card "To Be Confirmed" SEMPRE POR ÚLTIMO (na direita)
                 if (hasTbc) {
                     const tbcCard = document.createElement('div');
                     tbcCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]";
