@@ -142,7 +142,7 @@
             <!-- Métricas Financeiras -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
-                    <span class="text-xs text-[#D8B4D9]/70">Total Previsto no Mês</span>
+                    <span class="text-xs text-[#D8B4D9]/70">Total Previsto no Período</span>
                     <p id="stat-total" class="text-2xl font-bold text-[#F48FB1] mt-1">R$ 0,00</p>
                 </div>
                 <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]">
@@ -239,25 +239,53 @@
                 </form>
             </div>
 
-            <!-- Filtros de Alunos -->
-            <div class="flex flex-col sm:flex-row justify-between items-center gap-3 bg-[#262626] p-3 rounded-xl border border-[#6B3A7E]/40">
+            <!-- Filtros de Alunos & Range de Datas -->
+            <div class="flex flex-col lg:flex-row justify-between items-center gap-3 bg-[#262626] p-4 rounded-xl border border-[#6B3A7E]/40">
                 <span class="text-[#F48FB1] font-title text-2xl flex items-center gap-2">
                     <i class="fa-solid fa-users text-sm"></i> Lista de Alunos
                 </span>
                 
-                <div class="flex items-center gap-2">
-                    <label class="text-xs text-[#D8B4D9]">Organizar por:</label>
-                    <select id="sort-alunos" onchange="renderAlunosList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
-                        <option value="created">Data de Adição</option>
-                        <option value="status">Status (Atrasado > Pendente > Pago)</option>
-                        <option value="vencimento">Data de Vencimento</option>
-                        <option value="pagamento">Data de Pagamento</option>
-                    </select>
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
+                    <!-- Range de Datas -->
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span class="text-[#D8B4D9]">De:</span>
+                        <input type="date" id="filter-start-date" onchange="renderAlunosList()" class="px-2 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none">
+                        <span class="text-[#D8B4D9]">Até:</span>
+                        <input type="date" id="filter-end-date" onchange="renderAlunosList()" class="px-2 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none">
+                        <button onclick="clearDateFilter()" title="Limpar Filtro" class="text-xs px-2 py-1.5 bg-[#6B0F1A] text-white rounded hover:bg-[#801320] transition"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label class="text-xs text-[#D8B4D9]">Organizar:</label>
+                        <select id="sort-alunos" onchange="renderAlunosList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                            <option value="created">Data de Adição</option>
+                            <option value="status">Status (Atrasado > Pendente > Pago)</option>
+                            <option value="vencimento">Data de Vencimento</option>
+                            <option value="pagamento">Data de Pagamento</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <div id="alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Alunos Ativos Grid -->
+            <div id="alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <p class="text-neutral-400 italic col-span-full">Carregando dados dos alunos...</p>
+            </div>
+
+            <!-- TAB RETRÁTIL DE ALUNOS ARQUIVADOS -->
+            <div style="background-color: #262626;" class="rounded-xl shadow-lg border border-[#6B3A7E]/60 overflow-hidden mt-10">
+                <button onclick="toggleArchivedAlunosSection()" class="w-full p-4 flex items-center justify-between text-left hover:bg-[#331c42] transition">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[#F48FB1] font-title text-2xl"><i class="fa-solid fa-box-archive text-sm"></i> Alunos Arquivados</span>
+                        <span id="archived-alunos-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
+                    </div>
+                    <i id="archived-alunos-toggle-icon" class="fa-solid fa-chevron-down text-[#F48FB1] transition-transform"></i>
+                </button>
+                <div id="archived-alunos-section-content" class="hidden p-4 border-t border-[#6B3A7E]/50 space-y-4">
+                    <div id="archived-alunos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <p class="text-neutral-400 italic text-xs">Nenhum aluno arquivado.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -725,7 +753,8 @@
                     await addDoc(collection(db, "alunos"), { 
                         nome, valorHora, horas, totalValor, vencimentoDate, metodo, status, pagamentoDate, notes, 
                         createdAt: Date.now(),
-                        createdDate: todayStr
+                        createdDate: todayStr,
+                        archived: false
                     });
                     alunoForm.reset();
                     document.getElementById('aluno-vencimento-date').value = todayStr;
@@ -771,15 +800,36 @@
             await updateDoc(doc(db, "alunos", id), { status: nextStatus, pagamentoDate: payDate });
         }
 
+        window.toggleArchiveAluno = async function(id, currentArchivedState) {
+            await updateDoc(doc(db, "alunos", id), { archived: !currentArchivedState });
+        }
+
+        window.toggleCardCollapse = function(cardId) {
+            const bodyEl = document.getElementById(`card-body-${cardId}`);
+            const iconEl = document.getElementById(`card-icon-${cardId}`);
+            if (bodyEl && iconEl) {
+                bodyEl.classList.toggle('hidden');
+                iconEl.classList.toggle('rotate-180');
+            }
+        };
+
+        window.toggleArchivedAlunosSection = function() {
+            const content = document.getElementById('archived-alunos-section-content');
+            const icon = document.getElementById('archived-alunos-toggle-icon');
+            content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+        };
+
+        window.clearDateFilter = function() {
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            renderAlunosList();
+        }
+
         window.deleteAluno = async function(id) { await deleteDoc(doc(db, "alunos", id)); }
 
         onSnapshot(query(collection(db, "alunos")), (snapshot) => {
             alunosDataCache = [];
-            let totalPrevisto = 0;
-            let totalPago = 0;
-            let totalPendente = 0;
-            let countAtrasado = 0;
-
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
                 const id = docSnap.id;
@@ -795,31 +845,38 @@
                     valorHora: vHora,
                     horas: hrs
                 });
-
-                totalPrevisto += valTotal;
-                if (data.status === 'Pago') totalPago += valTotal;
-                else if (data.status === 'Pendente') totalPendente += valTotal;
-                else if (data.status === 'Atrasado') {
-                    totalPendente += valTotal;
-                    countAtrasado++;
-                }
             });
-
-            document.getElementById('stat-total').innerText = `R$ ${totalPrevisto.toFixed(2).replace('.', ',')}`;
-            document.getElementById('stat-pago').innerText = `R$ ${totalPago.toFixed(2).replace('.', ',')}`;
-            document.getElementById('stat-pendente').innerText = `R$ ${totalPendente.toFixed(2).replace('.', ',')}`;
-            document.getElementById('stat-atrasado').innerText = `${countAtrasado} Aluno(s)`;
 
             renderAlunosList();
         });
 
         window.renderAlunosList = function() {
             const grid = document.getElementById('alunos-grid');
+            const archivedGrid = document.getElementById('archived-alunos-grid');
+            const archivedBadge = document.getElementById('archived-alunos-badge');
             const sortBy = document.getElementById('sort-alunos').value;
+
+            const startDate = document.getElementById('filter-start-date').value;
+            const endDate = document.getElementById('filter-end-date').value;
+
             grid.innerHTML = '';
+            archivedGrid.innerHTML = '';
+
+            let totalPrevisto = 0;
+            let totalPago = 0;
+            let totalPendente = 0;
+            let countAtrasado = 0;
+            let activeCount = 0;
+            let archivedCount = 0;
 
             if (alunosDataCache.length === 0) {
                 grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno cadastrado ainda.</p>`;
+                archivedGrid.innerHTML = `<p class="text-neutral-400 italic text-xs col-span-full">Nenhum aluno arquivado.</p>`;
+                document.getElementById('stat-total').innerText = 'R$ 0,00';
+                document.getElementById('stat-pago').innerText = 'R$ 0,00';
+                document.getElementById('stat-pendente').innerText = 'R$ 0,00';
+                document.getElementById('stat-atrasado').innerText = '0 Aluno(s)';
+                archivedBadge.innerText = '0';
                 return;
             }
 
@@ -838,7 +895,48 @@
 
             sorted.forEach((data) => {
                 const id = data.id;
+                const isArchived = data.archived || false;
                 const statusVal = data.status || 'Pendente';
+                const vHora = data.valorHora || 0;
+                const sessoesCount = data.horas || 1;
+
+                let effectiveVal = data.totalValor;
+                let isInRange = true;
+
+                if (startDate && endDate) {
+                    const venc = data.vencimentoDate || data.vencimento || '';
+                    let matchedAulas = 0;
+                    if (data.aulasPresenca && Array.isArray(data.aulasPresenca)) {
+                        data.aulasPresenca.forEach(a => {
+                            if (a.dataAula && a.dataAula >= startDate && a.dataAula <= endDate) {
+                                matchedAulas++;
+                            }
+                        });
+                    }
+
+                    const vencInRange = (venc >= startDate && venc <= endDate);
+
+                    if (matchedAulas > 0) {
+                        effectiveVal = vHora * matchedAulas;
+                        isInRange = true;
+                    } else if (vencInRange) {
+                        effectiveVal = data.totalValor;
+                        isInRange = true;
+                    } else {
+                        isInRange = false;
+                    }
+                }
+
+                if (!isArchived && isInRange) {
+                    totalPrevisto += effectiveVal;
+                    if (statusVal === 'Pago') totalPago += effectiveVal;
+                    else if (statusVal === 'Pendente') totalPendente += effectiveVal;
+                    else if (statusVal === 'Atrasado') {
+                        totalPendente += effectiveVal;
+                        countAtrasado++;
+                    }
+                }
+
                 const badgeStatus = statusVal === 'Pago' ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
                                     statusVal === 'Atrasado' ? 'bg-[#6B0F1A] text-rose-200 border-rose-800 animate-pulse' : 'bg-[#33131A] text-[#D8B4D9] border-[#6B3A7E]';
 
@@ -850,12 +948,10 @@
                 const pagamentoTxt = formatDateDisplay(rawPagamento);
                 const criadoTxt = formatDateDisplay(data.createdDate || data.createdAt);
                 const observacaoTxt = data.notes || '';
-                const valorHoraNum = data.valorHora || 0;
-                const totalValNum = data.totalValor || 0;
 
                 const card = document.createElement('div');
-                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between";
-                card.style.backgroundColor = "#262626";
+                card.className = `p-4 rounded-xl shadow-lg border ${isArchived ? 'border-[#502064]/40 opacity-75' : 'border-[#502064]'}`;
+                card.style.backgroundColor = isArchived ? "#221926" : "#262626";
 
                 let pagamentoHtml = '';
                 if (pagamentoTxt) {
@@ -868,50 +964,84 @@
                 }
 
                 card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-start mb-2 border-b border-[#6B3A7E]/50 pb-2">
-                            <h3 class="font-title text-3xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
-                            <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${statusVal}</span>
+                    <div class="space-y-3">
+                        <!-- CABEÇALHO DO CARD (Sempre visível) -->
+                        <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2">
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
+                                    <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
+                                </button>
+                                <h3 class="font-title text-3xl text-[#F48FB1]">${data.nome || 'Sem Nome'}</h3>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs px-2 py-0.5 rounded border ${badgeStatus}">${statusVal}</span>
+                                <button onclick="toggleArchiveAluno('${id}', ${isArchived})" title="${isArchived ? 'Restaurar' : 'Arquivar'}" class="text-xs text-[#D8B4D9]/60 hover:text-[#F48FB1] transition">
+                                    <i class="fa-solid ${isArchived ? 'fa-rotate-left' : 'fa-box-archive'}"></i>
+                                </button>
+                            </div>
                         </div>
-                        
-                        <div class="text-xs space-y-1.5 text-[#D8B4D9]">
-                            <div class="flex justify-between">
-                                <span class="text-neutral-400">Hora × Sessões:</span>
-                                <span>R$ ${valorHoraNum.toFixed(2).replace('.', ',')} × ${data.horas || 0}h</span>
-                            </div>
-                            <div class="flex justify-between font-bold text-[#F48FB1] text-sm">
-                                <span>Total Mensal:</span>
-                                <span>R$ ${totalValNum.toFixed(2).replace('.', ',')}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-neutral-400">Vencimento:</span>
-                                <span>${vencimentoTxt}</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-neutral-400">Método:</span>
-                                <span>${data.metodo || 'Pix'}</span>
-                            </div>
-                            ${pagamentoHtml}
-                            <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
-                                <span>Adicionado em:</span>
-                                <span>${criadoTxt}</span>
-                            </div>
-                            ${observacaoHtml}
-                        </div>
-                    </div>
 
-                    <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
-                        <button onclick="toggleStatusAluno('${id}', '${statusVal}')" class="text-xs px-3 py-1.5 rounded font-medium ${statusVal === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
-                            ${statusVal === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
-                        </button>
-                        <div class="flex gap-2 text-xs">
-                            <button onclick="startEditAluno('${id}', '${safeNome}', ${valorHoraNum}, ${data.horas || 0}, '${data.vencimentoDate || ''}', '${data.metodo || 'Pix'}', '${statusVal}', '${data.pagamentoDate || ''}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                        <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
+                        <div id="card-body-${id}" class="space-y-3">
+                            <div class="text-xs space-y-1.5 text-[#D8B4D9]">
+                                <div class="flex justify-between">
+                                    <span class="text-neutral-400">Hora × Sessões:</span>
+                                    <span>R$ ${vHora.toFixed(2).replace('.', ',')} × ${sessoesCount}h</span>
+                                </div>
+                                <div class="flex justify-between font-bold text-[#F48FB1] text-sm">
+                                    <span>Total Mensal:</span>
+                                    <span>R$ ${(data.totalValor || 0).toFixed(2).replace('.', ',')}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-neutral-400">Vencimento:</span>
+                                    <span>${vencimentoTxt}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-neutral-400">Método:</span>
+                                    <span>${data.metodo || 'Pix'}</span>
+                                </div>
+                                ${pagamentoHtml}
+                                <div class="flex justify-between text-[10px] text-neutral-500 pt-1">
+                                    <span>Adicionado em:</span>
+                                    <span>${criadoTxt}</span>
+                                </div>
+                                ${observacaoHtml}
+                            </div>
+
+                            <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center">
+                                <button onclick="toggleStatusAluno('${id}', '${statusVal}')" class="text-xs px-3 py-1.5 rounded font-medium ${statusVal === 'Pago' ? 'bg-[#502064] text-[#D8B4D9] hover:text-white' : 'bg-[#6B0F1A] text-white hover:bg-[#801320]'} transition border border-[#F48FB1]/30">
+                                    ${statusVal === 'Pago' ? 'Marcar Pendente 🟡' : 'Confirmar Pago 🟢'}
+                                </button>
+                                <div class="flex gap-2 text-xs">
+                                    <button onclick="startEditAluno('${id}', '${safeNome}', ${vHora}, ${sessoesCount}, '${data.vencimentoDate || ''}', '${data.metodo || 'Pix'}', '${statusVal}', '${data.pagamentoDate || ''}', '${safeNotes}')" class="text-neutral-500 hover:text-[#F48FB1]"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteAluno('${id}')" class="text-neutral-500 hover:text-rose-400"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
-                grid.appendChild(card);
+
+                if (isArchived) {
+                    archivedCount++;
+                    archivedGrid.appendChild(card);
+                } else {
+                    activeCount++;
+                    grid.appendChild(card);
+                }
             });
+
+            document.getElementById('stat-total').innerText = `R$ ${totalPrevisto.toFixed(2).replace('.', ',')}`;
+            document.getElementById('stat-pago').innerText = `R$ ${totalPago.toFixed(2).replace('.', ',')}`;
+            document.getElementById('stat-pendente').innerText = `R$ ${totalPendente.toFixed(2).replace('.', ',')}`;
+            document.getElementById('stat-atrasado').innerText = `${countAtrasado} Aluno(s)`;
+            archivedBadge.innerText = archivedCount;
+
+            if (activeCount === 0) {
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum aluno ativo encontrado para o período selecionado.</p>`;
+            }
+            if (archivedCount === 0) {
+                archivedGrid.innerHTML = `<p class="text-neutral-400 italic text-xs col-span-full">Nenhum aluno arquivado.</p>`;
+            }
         }
 
         // BLOCO DE NOTAS
