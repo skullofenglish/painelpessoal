@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquivo de Tarefas - Painel Integrado</title>
+
+    <!-- 🌙 FAVICON GÓTICO -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+
+    <!-- Script para lembrar e voltar à última página aberta ao reabrir o site -->
+    <script>
+        (function() {
+            const currentPath = window.location.pathname.split('/').pop() || 'archive.html';
+            localStorage.setItem('lastActivePage', currentPath);
+        })();
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 🌸 GOOGLE FONT: Cinzel Decorative -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .font-title {
+            font-family: 'Cinzel Decorative', serif;
+        }
+        body {
+            font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+            background-color: #1A1A1A !important;
+            color: #D8B4D9;
+        }
+    </style>
+</head>
+<body style="background-color: #1A1A1A;" class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-2xl sm:text-3xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
+                Arquivo de Tarefas
+            </h1>
+            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full mt-2 sm:mt-0 flex items-center gap-1 border border-[#F48FB1]/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Sincronizado na Nuvem</span>
+            </div>
+        </div>
+
+        <!-- ABAS DE NAVEGAÇÃO DINÂMICAS AUTOMÁTICAS -->
+        <div id="nav-tabs-container" class="max-w-6xl mx-auto px-4 flex flex-wrap gap-2 sm:gap-4 border-b border-[#6B3A7E] py-2">
+            <!-- Renderizado dinamicamente pelo nav.js -->
+        </div>
+    </header>
+
+    <!-- Main Container: Arquivo -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-2">
+            <h2 class="text-xl sm:text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                <i class="fa-solid fa-box-archive text-base"></i> Dias & Tarefas Concluídas Arquivadas
+            </h2>
+            <p class="text-xs sm:text-sm text-[#D8B4D9]/70">Aqui ficam armazenados os dias e blocos que você arquivou. Você pode restaurá-los para a To-Do principal ou excluí-los permanentemente.</p>
+        </div>
+
+        <div id="archived-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p class="text-neutral-400 italic col-span-full">Carregando itens arquivados...</p>
+        </div>
+
+    </main>
+
+    <!-- Script da Navegação Dinâmica -->
+    <script src="nav.js"></script>
+
+    <!-- Firebase SDKs via CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, deleteDoc, doc, updateDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
+            authDomain: "painelpessoal-ab165.firebaseapp.com",
+            projectId: "painelpessoal-ab165",
+            storageBucket: "painelpessoal-ab165.firebasestorage.app",
+            messagingSenderId: "113043267624",
+            appId: "1:113043267624:web:b2d40daac28c3a55a4951d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.unarchiveDay = async function(itemsJson) {
+            const items = JSON.parse(decodeURIComponent(itemsJson));
+            for (const item of items) {
+                await updateDoc(doc(db, "todos", item.id), { archived: false });
+            }
+        }
+
+        window.deleteTodo = async (id) => { 
+            if (confirm("Deseja realmente excluir este item arquivado?")) {
+                await deleteDoc(doc(db, "todos", id)); 
+            }
+        }
+
+        onSnapshot(query(collection(db, "todos")), (snapshot) => {
+            const archiveContainer = document.getElementById('archived-container');
+            archiveContainer.innerHTML = '';
+
+            const archivedGrouped = {};
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+
+                if (data.archived) {
+                    const groupKey = data.isTbc ? 'To Be Confirmed' : (data.dueDate || 'Sem Data');
+                    if (!archivedGrouped[groupKey]) archivedGrouped[groupKey] = [];
+                    archivedGrouped[groupKey].push({ id, ...data });
+                }
+            });
+
+            if (Object.keys(archivedGrouped).length === 0) {
+                archiveContainer.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum dia arquivado ainda.</p>`;
+            } else {
+                Object.keys(archivedGrouped).sort().reverse().forEach(dateKey => {
+                    const dayCard = document.createElement('div');
+                    dayCard.className = "p-4 rounded-xl shadow-lg border border-[#502064]/60 opacity-90 hover:opacity-100 transition self-start";
+                    dayCard.style.backgroundColor = "#221926";
+
+                    const encodedItems = encodeURIComponent(JSON.stringify(archivedGrouped[dateKey]));
+
+                    dayCard.innerHTML = `
+                        <div class="border-b border-[#6B3A7E] pb-2 mb-3 flex items-center justify-between">
+                            <h3 class="font-title text-lg sm:text-xl text-[#D8B4D9]">
+                                <span>${dateKey}</span>
+                            </h3>
+                            <button onclick="unarchiveDay('${encodedItems}')" title="Desarquivar" class="text-xs text-[#F48FB1] hover:underline flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i> Restaurar</button>
+                        </div>
+                        <ul class="space-y-2" id="arch-list-${dateKey}"></ul>
+                    `;
+
+                    archiveContainer.appendChild(dayCard);
+                    const listEl = dayCard.querySelector(`#arch-list-${dateKey}`);
+
+                    archivedGrouped[dateKey].forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = "flex items-center justify-between p-2 bg-[#1A1A1A] rounded text-xs text-[#D8B4D9]/70 border border-[#6B3A7E]/30";
+                        li.innerHTML = `
+                            <span class="${item.completed ? 'line-through text-neutral-500' : ''}">${item.text}</span>
+                            <button onclick="deleteTodo('${item.id}')" class="text-neutral-500 hover:text-rose-400 ml-2"><i class="fa-solid fa-trash"></i></button>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
