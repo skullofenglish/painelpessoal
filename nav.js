@@ -1,0 +1,39 @@
+// nav.js - Central de Navegação Dinâmica
+
+const navigationItems = [
+    { href: 'index.html', label: 'To-Do List 📝' },
+    { href: 'archive.html', label: 'Arquivo 📦' },
+    { href: 'alunos.html', label: 'Alunos & Pagamentos 💰' },
+    { href: 'chamada.html', label: 'Chamada & Presença 📋' },
+    { href: 'lessonplans.html', label: 'Planejamento de Aulas 📚' },
+    { href: 'notes.html', label: 'Bloco de Notas 📌' },
+    { href: 'links.html', label: 'Links Úteis 🔗' },
+    { href: 'agenda.html', label: 'Google Agenda 📅' }
+];
+
+function renderGlobalNavigation() {
+    const container = document.getElementById('nav-tabs-container');
+    if (!container) return;
+
+    let currentPath = window.location.pathname.split('/').pop();
+    if (!currentPath || currentPath === '') currentPath = 'index.html';
+
+    localStorage.setItem('lastActivePage', currentPath);
+
+    container.innerHTML = '';
+
+    navigationItems.forEach(item => {
+        const isActive = currentPath === item.href;
+        const a = document.createElement('a');
+        a.href = item.href;
+        a.className = `px-3 py-1.5 text-sm font-medium transition whitespace-nowrap border-b-2 flex items-center gap-1.5 ${
+            isActive 
+                ? 'border-[#F48FB1] text-[#F48FB1] font-bold' 
+                : 'border-transparent text-[#D8B4D9]/70 hover:text-white hover:border-[#F48FB1]/50'
+        }`;
+        a.innerText = item.label;
+        container.appendChild(a);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', renderGlobalNavigation);
