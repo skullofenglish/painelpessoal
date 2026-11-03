@@ -13,8 +13,8 @@
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- 🌸 GOOGLE FONT: Fleur De Leah -->
-    <link href="https://fonts.googleapis.com/css2?family=Fleur+De+Leah&display=swap" rel="stylesheet">
+    <!-- 🏛️ GOOGLE FONT: Cinzel Decorative -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- 📝 QUILL.JS EDITOR (Rich Text Format) -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -22,7 +22,8 @@
 
     <style>
         .font-title {
-            font-family: 'Fleur De Leah', cursive, sans-serif;
+            font-family: 'Cinzel Decorative', cursive, serif;
+            letter-spacing: 0.05em;
         }
         body {
             font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
@@ -72,7 +73,7 @@
                 <a href="index.html" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-3 py-1.5 rounded-lg text-sm font-medium transition border border-[#F48FB1]/30 flex items-center gap-2">
                     <i class="fa-solid fa-house"></i> Voltar à Agenda
                 </a>
-                <h1 class="text-4xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
+                <h1 class="text-2xl sm:text-3xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
                     Planejamento de Aulas & CELTA
                 </h1>
             </div>
@@ -91,7 +92,7 @@
         <div style="background-color: #262626;" class="rounded-xl shadow-lg border border-[#6B3A7E]/60 overflow-hidden">
             <button onclick="toggleCeltaGuide()" class="w-full p-4 flex items-center justify-between text-left hover:bg-[#331c42] transition">
                 <div class="flex items-center gap-2">
-                    <span class="text-[#F48FB1] font-title text-2xl"><i class="fa-solid fa-graduation-cap text-base"></i> Guia Rápido de Etapas CELTA</span>
+                    <span class="text-[#F48FB1] font-title text-lg sm:text-xl flex items-center gap-2"><i class="fa-solid fa-graduation-cap text-base"></i> Guia Rápido de Etapas CELTA</span>
                     <span class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">Referência</span>
                 </div>
                 <i id="celta-toggle-icon" class="fa-solid fa-chevron-down text-[#F48FB1] transition-transform"></i>
@@ -150,7 +151,7 @@
         <!-- FORMULÁRIO DE CRIAR / EDITAR PLANO DE AULA -->
         <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-4">
             <div class="flex justify-between items-center border-b border-[#6B3A7E] pb-2">
-                <h2 id="form-title" class="text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                <h2 id="form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
                     <i class="fa-solid fa-pen-nib text-base"></i> Novo Plano de Aula
                 </h2>
                 <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
@@ -222,7 +223,7 @@
         <!-- BARRA DE PESQUISA E FILTROS DE PLANOS -->
         <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/40 flex flex-col lg:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-2 w-full lg:w-auto">
-                <span class="text-[#F48FB1] font-title text-2xl whitespace-nowrap"><i class="fa-solid fa-book-bookmark text-sm"></i> Meus Planos</span>
+                <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-sm"></i> Meus Planos</span>
                 <span id="plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
             </div>
 
@@ -479,8 +480,8 @@
                 card.style.backgroundColor = "#262626";
 
                 const focusBadgeColor = data.focus.includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
-                                         data.focus.includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
-                                         data.focus.includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+                                       data.focus.includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
+                                       data.focus.includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-pink-950 text-pink-300 border-pink-800';
 
                 card.innerHTML = `
                     <div>
@@ -491,7 +492,7 @@
                                     <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
                                 </button>
                                 <div>
-                                    <h3 class="font-title text-3xl text-[#F48FB1]">${data.aluno || 'Aluno não informado'}</h3>
+                                    <h3 class="font-title text-lg sm:text-xl text-[#F48FB1]">${data.aluno || 'Aluno não informado'}</h3>
                                     <div class="text-xs text-[#D8B4D9]/80 font-medium">${data.topic || 'Sem tópico'}</div>
                                 </div>
                             </div>
