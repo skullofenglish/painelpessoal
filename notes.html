@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloco de Notas & Rascunhos | Painel Pessoal</title>
+
+    <!-- 🌙 FAVICON GÓTICO -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌙</text></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 🌸 GOOGLE FONT: Cinzel Decorative -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <style>
+        .font-title {
+            font-family: 'Cinzel Decorative', serif;
+        }
+        body {
+            font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+            background-color: #1A1A1A !important;
+            color: #D8B4D9;
+        }
+    </style>
+</head>
+<body style="background-color: #1A1A1A;" class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center">
+            <h1 class="text-3xl sm:text-4xl font-title tracking-wide text-[#F48FB1] flex items-center gap-2">
+                Meu Painel Integrado
+            </h1>
+            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full mt-2 sm:mt-0 flex items-center gap-1 border border-[#F48FB1]/30">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Sincronizado na Nuvem</span>
+            </div>
+        </div>
+
+        <!-- ABAS DE NAVEGAÇÃO DINÂMICAS AUTOMÁTICAS -->
+        <div id="nav-tabs-container" class="max-w-6xl mx-auto px-4 flex flex-wrap gap-2 sm:gap-4 border-b border-[#6B3A7E] py-2">
+            <!-- Renderizado dinamicamente pelo nav.js -->
+        </div>
+    </header>
+
+    <!-- Main Container: Bloco de Notas -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- Formulário Criar/Editar Nota -->
+        <div style="background-color: #262626;" class="p-5 rounded-xl shadow-lg border border-[#6B3A7E]/40 space-y-3">
+            <div class="flex justify-between items-center">
+                <h2 id="note-form-title" class="text-xl sm:text-2xl font-title text-[#F48FB1] flex items-center gap-2">
+                    <i class="fa-solid fa-note-sticky text-base"></i> Nova Nota
+                </h2>
+                <button id="cancel-note-edit" onclick="cancelNoteEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
+            </div>
+            
+            <form id="note-form" class="flex flex-col gap-3">
+                <input type="hidden" id="note-editing-id" value="">
+                
+                <input type="text" id="note-title" placeholder="Título da Nota..." required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                
+                <textarea id="note-content" rows="4" placeholder="Escreva o seu rascunho ou anotação aqui..." required class="px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1] resize-y"></textarea>
+
+                <div class="flex justify-end pt-1">
+                    <button type="submit" id="note-submit-btn" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-6 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30">
+                        Guardar Nota
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- LISTA DE NOTAS GUARDADAS -->
+        <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <p class="text-neutral-400 italic col-span-full">A carregar notas...</p>
+        </div>
+
+    </main>
+
+    <!-- Script da Navegação Dinâmica -->
+    <script src="nav.js"></script>
+
+    <!-- Firebase SDKs via CDN -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCk3kW6ae9nceSgvRWJrfm5ka_Kbjor0mk",
+            authDomain: "painelpessoal-ab165.firebaseapp.com",
+            projectId: "painelpessoal-ab165",
+            storageBucket: "painelpessoal-ab165.firebasestorage.app",
+            messagingSenderId: "113043267624",
+            appId: "1:113043267624:web:b2d40daac28c3a55a4951d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const noteForm = document.getElementById('note-form');
+
+        noteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            const editId = document.getElementById('note-editing-id').value;
+
+            try {
+                if (editId) {
+                    await updateDoc(doc(db, "notes", editId), { title, content, updatedAt: Date.now() });
+                    cancelNoteEdit();
+                } else {
+                    await addDoc(collection(db, "notes"), { 
+                        title, content, createdAt: Date.now() 
+                    });
+                    noteForm.reset();
+                }
+            } catch (err) { console.error("Erro ao salvar nota:", err); }
+        });
+
+        window.startEditNote = function(id, title, content) {
+            document.getElementById('note-editing-id').value = id;
+            document.getElementById('note-title').value = title;
+            document.getElementById('note-content').value = content;
+            
+            document.getElementById('note-form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Nota`;
+            document.getElementById('note-submit-btn').innerText = "Atualizar Nota";
+            document.getElementById('cancel-note-edit').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.cancelNoteEdit = function() {
+            document.getElementById('note-editing-id').value = "";
+            noteForm.reset();
+            document.getElementById('note-form-title').innerHTML = `<i class="fa-solid fa-note-sticky text-base"></i> Nova Nota`;
+            document.getElementById('note-submit-btn').innerText = "Guardar Nota";
+            document.getElementById('cancel-note-edit').classList.add('hidden');
+        }
+
+        onSnapshot(query(collection(db, "notes"), orderBy("createdAt", "desc")), (snapshot) => {
+            const container = document.getElementById('notes-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (snapshot.empty) {
+                container.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma nota guardada ainda.</p>`;
+                return;
+            }
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const id = docSnap.id;
+                const safeTitle = data.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                const safeContent = data.content.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
+
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] flex flex-col justify-between space-y-3";
+                card.style.backgroundColor = "#262626";
+
+                card.innerHTML = `
+                    <div>
+                        <div class="border-b border-[#6B3A7E] pb-2 mb-2 flex items-center justify-between">
+                            <h3 class="font-title text-lg text-[#F48FB1] truncate">${data.title}</h3>
+                        </div>
+                        <p class="text-sm text-[#D8B4D9] whitespace-pre-wrap break-words">${data.content}</p>
+                    </div>
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#6B3A7E]/30 text-xs">
+                        <button onclick="startEditNote('${id}', '${safeTitle}', '${safeContent}')" class="text-neutral-400 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i> Editar</button>
+                        <button onclick="deleteNote('${id}')" class="text-neutral-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i> Apagar</button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        });
+
+        window.deleteNote = async (id) => { 
+            if (confirm("Tem certeza que deseja apagar esta nota?")) {
+                await deleteDoc(doc(db, "notes", id)); 
+            }
+        }
+    </script>
+</body>
+</html>
