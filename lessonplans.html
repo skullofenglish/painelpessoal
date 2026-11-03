@@ -48,7 +48,7 @@
             color: #D8B4D9 !important;
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
-            min-height: 180px;
+            min-height: 150px;
             font-family: inherit;
         }
         .ql-stroke { stroke: #D8B4D9 !important; }
@@ -68,7 +68,7 @@
 
     <!-- Header -->
     <header style="background-color: #502064;" class="text-white shadow-md border-b border-[#6B3A7E]">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <div class="flex items-center gap-4">
                 <a href="index.html" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-3 py-1.5 rounded-lg text-sm font-medium transition border border-[#F48FB1]/30 flex items-center gap-2">
                     <i class="fa-solid fa-house"></i> Voltar à Agenda
@@ -86,7 +86,7 @@
     </header>
 
     <!-- Conteúdo Principal -->
-    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
         <!-- ABA RETRÁTIL: GUIA CELTA DE CONSULTA RÁPIDA -->
         <div style="background-color: #262626;" class="rounded-xl shadow-lg border border-[#6B3A7E]/60 overflow-hidden">
@@ -105,15 +105,9 @@
                         <h4 class="font-bold text-[#F48FB1] border-b border-[#6B3A7E]/40 pb-1">1. Foco em Sistema (PPP)</h4>
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
                             <li><strong>Lead-in:</strong> Aquecimento e tema geral.</li>
-                            <li><strong>Contextualization / Presentation:</strong> Texto/áudio com foco em:
-                                <ul class="pl-3 text-[11px] list-square">
-                                    <li><em>Meaning:</em> Significado (usar CCQs).</li>
-                                    <li><em>Form:</em> Estrutura/classe gramatical.</li>
-                                    <li><em>Pronunciation:</em> Sons e intonação.</li>
-                                </ul>
-                            </li>
-                            <li><strong>Controlled Practice:</strong> Exercícios guiados (lacunas/matching).</li>
-                            <li><strong>Freer Practice / Production:</strong> Role-play ou discussão autônoma.</li>
+                            <li><strong>Contextualization / Presentation:</strong> Texto/áudio com foco em Meaning, Form e Pronunciation.</li>
+                            <li><strong>Controlled Practice:</strong> Exercícios guiados.</li>
+                            <li><strong>Freer Practice:</strong> Produção autônoma.</li>
                         </ul>
                     </div>
 
@@ -122,10 +116,10 @@
                         <h4 class="font-bold text-[#F48FB1] border-b border-[#6B3A7E]/40 pb-1">2. Habilidades Receptivas</h4>
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
                             <li><strong>Lead-in:</strong> Introdução e engajamento.</li>
-                            <li><strong>Pre-teaching Vocabulary:</strong> Vocabulário essencial (blocking).</li>
-                            <li><strong>Gist Reading / Listening:</strong> Compreensão global / skimming.</li>
-                            <li><strong>Detailed Reading / Listening:</strong> Scanning / busca de detalhes.</li>
-                            <li><strong>Follow-up / Post-task:</strong> Reação e discussão dos alunos.</li>
+                            <li><strong>Pre-teaching Vocab:</strong> Vocabulário essencial.</li>
+                            <li><strong>Gist Reading / Listening:</strong> Compreensão global.</li>
+                            <li><strong>Detailed Reading / Listening:</strong> Busca de detalhes.</li>
+                            <li><strong>Follow-up:</strong> Reação e discussão.</li>
                         </ul>
                     </div>
 
@@ -133,17 +127,17 @@
                     <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-2">
                         <h4 class="font-bold text-[#F48FB1] border-b border-[#6B3A7E]/40 pb-1">3. Habilidades Produtivas</h4>
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
-                            <li><strong>Lead-in:</strong> Apresentação do tema e realidade.</li>
-                            <li><strong>Exposure to a Model:</strong> Exemplo de texto/áudio modelo.</li>
-                            <li><strong>Language / Preparation:</strong> Organização de ideias e expressões.</li>
-                            <li><strong>Task / Production:</strong> Execução com monitoramento.</li>
-                            <li><strong>Feedback & Error Correction:</strong> Correção e retorno coletivo.</li>
+                            <li><strong>Lead-in:</strong> Apresentação do tema.</li>
+                            <li><strong>Exposure to a Model:</strong> Texto/áudio modelo.</li>
+                            <li><strong>Language / Prep:</strong> Expressões e ideias.</li>
+                            <li><strong>Task / Production:</strong> Execução da tarefa.</li>
+                            <li><strong>Feedback & Error Correction:</strong> Correção coletiva.</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="bg-[#33131A] p-3 rounded-lg border border-rose-900/60 flex flex-wrap justify-between items-center gap-2 text-rose-200">
-                    <span><strong>Transversais Obrigatórios:</strong> ICQs (checar instruções) | CCQs (checar conceito) | Monitoring (circular/observar) | Deferred Error Correction (correção tardia).</span>
+                    <span><strong>Transversais Obrigatórios:</strong> ICQs | CCQs | Monitoring | Deferred Error Correction.</span>
                 </div>
             </div>
         </div>
@@ -179,12 +173,13 @@
                     </div>
 
                     <div>
-                        <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Foco da Aula (CELTA)</label>
-                        <select id="plan-focus" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Foco da Aula</label>
+                        <select id="plan-focus" onchange="onFocusChange()" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                             <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP - Gramática/Vocab)</option>
                             <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas (Reading/Listening)</option>
                             <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas (Speaking/Writing)</option>
-                            <option value="Revisão / Livre">Revisão / Livre</option>
+                            <option value="Free Class">Free Class (Personalizado)</option>
+                            <option value="Revisão / Livre">Revisão / Livre (Simples)</option>
                         </select>
                     </div>
                 </div>
@@ -206,13 +201,22 @@
                     </div>
                 </div>
 
-                <!-- EDITOR DE TEXTO RICO (QUILL) -->
-                <div>
-                    <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Detalhamento da Aula (Formatação Livre, Marcadores & Links)</label>
-                    <div id="quill-editor"></div>
+                <!-- ÁREA DE CONSTRUÇÃO DINÂMICA DE ETAPAS (COLUNAS) -->
+                <div class="space-y-3 pt-2">
+                    <div class="flex justify-between items-center">
+                        <label class="text-xs text-[#D8B4D9]/80 block font-bold">Etapas da Aula em Colunas</label>
+                        <button type="button" id="add-column-btn" onclick="addCustomColumn('')" class="hidden text-xs bg-[#502064] hover:bg-[#6B3A7E] text-[#F48FB1] px-3 py-1 rounded border border-[#6B3A7E] transition items-center gap-1">
+                            <i class="fa-solid fa-plus"></i> Adicionar Nova Etapa
+                        </button>
+                    </div>
+
+                    <!-- Container onde as colunas com editores Quill serão geradas -->
+                    <div id="dynamic-columns-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                        <!-- Gerado dinamicamente via JS -->
+                    </div>
                 </div>
 
-                <div class="flex justify-end pt-2">
+                <div class="flex justify-end pt-4 border-t border-[#6B3A7E]/40">
                     <button type="submit" id="submit-btn" style="background-color: #6B0F1A;" class="hover:bg-[#801320] text-white px-8 py-2 rounded-lg font-medium transition border border-[#F48FB1]/30 flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> Salvar Plano de Aula
                     </button>
@@ -245,6 +249,7 @@
                     <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
                     <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
                     <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
+                    <option value="Free Class">Free Class</option>
                     <option value="Revisão / Livre">Revisão / Livre</option>
                 </select>
             </div>
@@ -277,21 +282,34 @@
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('plan-date').value = todayStr;
 
-        // Inicializar Editor Quill
-        const quill = new Quill('#quill-editor', {
-            theme: 'snow',
-            modules: {
-                toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'indent': '-1'}, { 'indent': '+1' }],
-                    ['link', 'clean']
-                ]
-            },
-            placeholder: 'Digite as etapas da aula aqui... (Link é transformado automaticamente)'
-        });
+        // Mapeamento de Etapas Padrão por Foco
+        const defaultStagesMap = {
+            "Sistema (PPP - Gramática/Vocab)": [
+                "Lead-in",
+                "Contextualization / Presentation (Meaning, Form, Pron)",
+                "Controlled Practice",
+                "Freer Practice / Production"
+            ],
+            "Habilidades Receptivas (Reading/Listening)": [
+                "Lead-in",
+                "Pre-teaching Vocabulary",
+                "Gist Reading / Listening (Skimming)",
+                "Detailed Reading / Listening (Scanning)",
+                "Follow-up / Post-task"
+            ],
+            "Habilidades Produtivas (Speaking/Writing)": [
+                "Lead-in",
+                "Exposure to a Model",
+                "Language / Preparation",
+                "Task / Production",
+                "Feedback & Error Correction"
+            ],
+            "Revisão / Livre": [
+                "Conteúdo / Anotações da Aula"
+            ]
+        };
+
+        let quillInstances = []; // Armazenará { title, quill }
 
         window.toggleCeltaGuide = function() {
             const content = document.getElementById('celta-guide-content');
@@ -323,7 +341,163 @@
             return String(val);
         }
 
-        // AUTO-PREENCHER SUGESTÕES DE ALUNOS REGISTRADOS
+        // GERAR COLUNAS NO FORMULÁRIO
+        window.buildColumns = function(focusType, savedColumnsData = null) {
+            const container = document.getElementById('dynamic-columns-container');
+            const addBtn = document.getElementById('add-column-btn');
+            container.innerHTML = '';
+            quillInstances = [];
+
+            if (focusType === 'Free Class') {
+                addBtn.classList.remove('hidden');
+                addBtn.classList.add('flex');
+            } else {
+                addBtn.classList.add('hidden');
+                addBtn.classList.remove('flex');
+            }
+
+            let stagesToBuild = [];
+
+            if (savedColumnsData && Array.isArray(savedColumnsData) && savedColumnsData.length > 0) {
+                stagesToBuild = savedColumnsData;
+            } else if (focusType === 'Free Class') {
+                stagesToBuild = [
+                    { title: "Warm-up", html: "" },
+                    { title: "Main Activity", html: "" }
+                ];
+            } else {
+                const defaultTitles = defaultStagesMap[focusType] || ["Etapa 1"];
+                stagesToBuild = defaultTitles.map(t => ({ title: t, html: "" }));
+            }
+
+            stagesToBuild.forEach((stage, index) => {
+                renderColumnElement(stage.title, stage.html, focusType === 'Free Class', index);
+            });
+        };
+
+        function renderColumnElement(title, htmlContent, isFreeClass, index) {
+            const container = document.getElementById('dynamic-columns-container');
+            const colId = `quill-col-${Date.now()}-${index}-${Math.floor(Math.random()*1000)}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/50 space-y-2 flex flex-col";
+            wrapper.dataset.index = index;
+
+            let headerHtml = `<h4 class="font-bold text-[#F48FB1] text-xs pb-1 border-b border-[#6B3A7E]/30">${title}</h4>`;
+            if (isFreeClass) {
+                headerHtml = `
+                    <div class="flex items-center justify-between pb-1 border-b border-[#6B3A7E]/30 gap-2">
+                        <input type="text" value="${title.replace(/"/g, '&quot;')}" placeholder="Nome da Etapa" oninput="updateColumnTitle(this, ${index})" class="bg-[#262626] border border-[#6B3A7E] text-[#F48FB1] font-bold text-xs px-2 py-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                        <div class="flex items-center gap-1">
+                            <button type="button" onclick="moveColumn(${index}, -1)" title="Mover para Esquerda" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button type="button" onclick="moveColumn(${index}, 1)" title="Mover para Direita" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-right"></i></button>
+                            <button type="button" onclick="removeColumn(${index})" title="Excluir Coluna" class="text-rose-400 hover:text-rose-300 px-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            wrapper.innerHTML = `
+                ${headerHtml}
+                <div id="${colId}" class="flex-grow"></div>
+            `;
+
+            container.appendChild(wrapper);
+
+            const quillInstance = new Quill(`#${colId}`, {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'clean']
+                    ]
+                },
+                placeholder: 'Escreva os detalhes desta etapa...'
+            });
+
+            if (htmlContent) {
+                quillInstance.root.innerHTML = htmlContent;
+            }
+
+            quillInstances.push({
+                getTitle: () => {
+                    if (isFreeClass) {
+                        const inputEl = wrapper.querySelector('input');
+                        return inputEl ? inputEl.value.trim() || 'Etapa sem nome' : title;
+                    }
+                    return title;
+                },
+                quill: quillInstance
+            });
+        }
+
+        window.onFocusChange = function() {
+            const focusVal = document.getElementById('plan-focus').value;
+            buildColumns(focusVal);
+        };
+
+        window.addCustomColumn = function(title = "Nova Etapa") {
+            // Salvar estado atual de todas as colunas antes de recriar
+            const currentData = quillInstances.map(item => ({
+                title: item.getTitle(),
+                html: item.quill.root.innerHTML
+            }));
+            currentData.push({ title: title || "Nova Etapa", html: "" });
+            
+            const container = document.getElementById('dynamic-columns-container');
+            container.innerHTML = '';
+            quillInstances = [];
+
+            currentData.forEach((stage, index) => {
+                renderColumnElement(stage.title, stage.html, true, index);
+            });
+        };
+
+        window.removeColumn = function(indexToRemove) {
+            const currentData = [];
+            quillInstances.forEach((item, idx) => {
+                if (idx !== indexToRemove) {
+                    currentData.push({
+                        title: item.getTitle(),
+                        html: item.quill.root.innerHTML
+                    });
+                }
+            });
+
+            const container = document.getElementById('dynamic-columns-container');
+            container.innerHTML = '';
+            quillInstances = [];
+
+            currentData.forEach((stage, index) => {
+                renderColumnElement(stage.title, stage.html, true, index);
+            });
+        };
+
+        window.moveColumn = function(index, direction) {
+            const newIndex = index + direction;
+            const currentData = quillInstances.map(item => ({
+                title: item.getTitle(),
+                html: item.quill.root.innerHTML
+            }));
+
+            if (newIndex < 0 || newIndex >= currentData.length) return;
+
+            // Troca de posição
+            const temp = currentData[index];
+            currentData[index] = currentData[newIndex];
+            currentData[newIndex] = temp;
+
+            const container = document.getElementById('dynamic-columns-container');
+            container.innerHTML = '';
+            quillInstances = [];
+
+            currentData.forEach((stage, idx) => {
+                renderColumnElement(stage.title, stage.html, true, idx);
+            });
+        };
+
+        // AUTO-PREENCHER SUGESTÕES DE ALUNOS
         onSnapshot(query(collection(db, "alunos")), (snapshot) => {
             const datalist = document.getElementById('alunos-list');
             const filterAluno = document.getElementById('filter-aluno');
@@ -362,28 +536,34 @@
             const focus = document.getElementById('plan-focus').value;
             const topic = document.getElementById('plan-topic').value;
             const status = document.getElementById('plan-status').value;
-            const contentHtml = quill.root.innerHTML;
+            
+            // Coleta os dados de todas as colunas dinâmicas
+            const columnsData = quillInstances.map(item => ({
+                title: item.getTitle(),
+                html: item.quill.root.innerHTML
+            }));
+
             const editId = document.getElementById('editing-id').value;
 
             try {
                 if (editId) {
                     await updateDoc(doc(db, "lessonplans", editId), {
-                        aluno, date, time, focus, topic, status, contentHtml
+                        aluno, date, time, focus, topic, status, columnsData
                     });
                     cancelEdit();
                 } else {
                     await addDoc(collection(db, "lessonplans"), {
-                        aluno, date, time, focus, topic, status, contentHtml,
+                        aluno, date, time, focus, topic, status, columnsData,
                         createdAt: Date.now()
                     });
                     planForm.reset();
-                    quill.setText('');
                     document.getElementById('plan-date').value = todayStr;
+                    buildColumns("Sistema (PPP - Gramática/Vocab)");
                 }
             } catch (err) { console.error("Erro ao salvar plano:", err); }
         });
 
-        window.startEditPlan = function(id, aluno, date, time, focus, topic, status, contentHtml) {
+        window.startEditPlan = function(id, aluno, date, time, focus, topic, status, columnsDataJson) {
             document.getElementById('editing-id').value = id;
             document.getElementById('plan-aluno').value = aluno;
             document.getElementById('plan-date').value = date;
@@ -391,7 +571,13 @@
             document.getElementById('plan-focus').value = focus;
             document.getElementById('plan-topic').value = topic;
             document.getElementById('plan-status').value = status;
-            quill.root.innerHTML = decodeURIComponent(contentHtml);
+            
+            let parsedColumns = [];
+            try {
+                parsedColumns = JSON.parse(decodeURIComponent(columnsDataJson));
+            } catch(e) { parsedColumns = []; }
+
+            buildColumns(focus, parsedColumns);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Plano de Aula`;
             document.getElementById('submit-btn').innerText = "Atualizar Plano";
@@ -399,7 +585,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        window.duplicatePlan = function(aluno, focus, topic, contentHtml) {
+        window.duplicatePlan = function(aluno, focus, topic, columnsDataJson) {
             document.getElementById('editing-id').value = '';
             document.getElementById('plan-aluno').value = aluno;
             document.getElementById('plan-date').value = todayStr;
@@ -407,7 +593,13 @@
             document.getElementById('plan-focus').value = focus;
             document.getElementById('plan-topic').value = `${topic} (Cópia)`;
             document.getElementById('plan-status').value = '🔵 Rascunho';
-            quill.root.innerHTML = decodeURIComponent(contentHtml);
+
+            let parsedColumns = [];
+            try {
+                parsedColumns = JSON.parse(decodeURIComponent(columnsDataJson));
+            } catch(e) { parsedColumns = []; }
+
+            buildColumns(focus, parsedColumns);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-copy text-base"></i> Duplicar Plano de Aula`;
             document.getElementById('submit-btn').innerText = "Salvar Novo Plano";
@@ -418,11 +610,11 @@
         window.cancelEdit = function() {
             document.getElementById('editing-id').value = '';
             planForm.reset();
-            quill.setText('');
             document.getElementById('plan-date').value = todayStr;
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-nib text-base"></i> Novo Plano de Aula`;
             document.getElementById('submit-btn').innerText = "Salvar Plano de Aula";
             document.getElementById('cancel-edit-btn').classList.add('hidden');
+            buildColumns("Sistema (PPP - Gramática/Vocab)");
         };
 
         window.deletePlan = async function(id) {
@@ -452,9 +644,10 @@
             let displayedCount = 0;
 
             const filtered = cachedPlans.filter(plan => {
+                const jsonCols = JSON.stringify(plan.columnsData || '');
                 const matchesSearch = (plan.aluno || '').toLowerCase().includes(searchVal) ||
                                       (plan.topic || '').toLowerCase().includes(searchVal) ||
-                                      (plan.contentHtml || '').toLowerCase().includes(searchVal);
+                                      jsonCols.toLowerCase().includes(searchVal);
 
                 const matchesAluno = !filterAlunoVal || plan.aluno === filterAlunoVal;
                 const matchesFocus = !filterFocusVal || plan.focus === filterFocusVal;
@@ -471,21 +664,41 @@
             filtered.forEach(data => {
                 displayedCount++;
                 const id = data.id;
-                const safeContent = encodeURIComponent(data.contentHtml || '');
+                const safeColumnsJson = encodeURIComponent(JSON.stringify(data.columnsData || []));
                 const dateTxt = formatDateDisplay(data.date);
                 const timeTxt = data.time ? ` às ${data.time}` : '';
 
                 const card = document.createElement('div');
-                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start";
+                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start col-span-1 md:col-span-2";
                 card.style.backgroundColor = "#262626";
 
                 const focusBadgeColor = data.focus.includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
                                        data.focus.includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
-                                       data.focus.includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+                                       data.focus.includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
+                                       data.focus.includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+
+                // Renderização das colunas dentro do card
+                let columnsCardHtml = '';
+                if (Array.isArray(data.columnsData) && data.columnsData.length > 0) {
+                    columnsCardHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
+                    data.columnsData.forEach(col => {
+                        columnsCardHtml += `
+                            <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-1">
+                                <h5 class="font-bold text-[#F48FB1] text-xs border-b border-[#6B3A7E]/30 pb-1">${col.title}</h5>
+                                <div class="text-xs text-[#D8B4D9] ql-editor" style="max-height: 250px; overflow-y: auto;">
+                                    ${col.html || '<em class="text-neutral-500">Vazio</em>'}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    columnsCardHtml += `</div>`;
+                } else {
+                    columnsCardHtml = `<em class="text-neutral-500 text-xs">Sem etapas cadastradas.</em>`;
+                }
 
                 card.innerHTML = `
                     <div>
-                        <!-- CABEÇALHO DO CARD (Sempre Visível) -->
+                        <!-- CABEÇALHO DO CARD -->
                         <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2 mb-3">
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
@@ -503,23 +716,21 @@
                         </div>
 
                         <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
-                        <div id="card-body-${id}" style="display: block;">
-                            <div class="text-xs text-[#D8B4D9]/60 italic mb-3 flex items-center gap-2">
+                        <div id="card-body-${id}" style="display: block;" class="space-y-3">
+                            <div class="text-xs text-[#D8B4D9]/60 italic flex items-center gap-2">
                                 <i class="fa-solid fa-calendar-day"></i> Data: ${dateTxt}${timeTxt}
                             </div>
 
-                            <!-- CONTEÚDO FORMATADO DO EDITOR -->
-                            <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 text-xs text-[#D8B4D9] space-y-2 ql-editor" style="max-height: 350px; overflow-y: auto;">
-                                ${data.contentHtml || '<em class="text-neutral-500">Sem conteúdo registrado.</em>'}
-                            </div>
+                            <!-- COLUNAS DO PLANO -->
+                            ${columnsCardHtml}
 
                             <!-- RODAPÉ DE AÇÕES -->
                             <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center text-xs">
-                                <button onclick="duplicatePlan('${(data.aluno || '').replace(/'/g, "\\'")}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${safeContent}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
+                                <button onclick="duplicatePlan('${(data.aluno || '').replace(/'/g, "\\'")}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${safeColumnsJson}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
                                     <i class="fa-solid fa-copy"></i> Duplicar Plano
                                 </button>
                                 <div class="flex gap-2">
-                                    <button onclick="startEditPlan('${id}', '${(data.aluno || '').replace(/'/g, "\\'")}', '${data.date}', '${data.time || ''}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${data.status || '🔵 Rascunho'}', '${safeContent}')" class="text-neutral-400 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i> Editar</button>
+                                    <button onclick="startEditPlan('${id}', '${(data.aluno || '').replace(/'/g, "\\'")}', '${data.date}', '${data.time || ''}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${data.status || '🔵 Rascunho'}', '${safeColumnsJson}')" class="text-neutral-400 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i> Editar</button>
                                     <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i> Excluir</button>
                                 </div>
                             </div>
@@ -532,6 +743,9 @@
 
             countBadge.innerText = displayedCount;
         }
+
+        // Inicializar com o foco padrão ao abrir a página
+        buildColumns("Sistema (PPP - Gramática/Vocab)");
     </script>
 </body>
 </html>
