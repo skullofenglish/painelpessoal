@@ -25,7 +25,11 @@ function renderGlobalNavigation() {
     navigationItems.forEach(item => {
         const isActive = currentPath === item.href;
         const a = document.createElement('a');
-        a.href = item.href;
+        
+        // Garante o caminho absoluto baseado na raiz do repositório GitHub Pages
+        const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        a.href = basePath + item.href;
+
         a.className = `px-3 py-1.5 text-sm font-medium transition whitespace-nowrap border-b-2 flex items-center gap-1.5 ${
             isActive 
                 ? 'border-[#F48FB1] text-[#F48FB1] font-bold' 
