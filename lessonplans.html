@@ -105,7 +105,7 @@
                         <h4 class="font-bold text-[#F48FB1] border-b border-[#6B3A7E]/40 pb-1">1. Foco em Sistema (PPP)</h4>
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
                             <li><strong>Lead-in:</strong> Aquecimento e tema geral.</li>
-                            <li><strong>Contextualization / Presentation:</strong> Texto/áudio com foco em Meaning, Form e Pronunciation.</li>
+                            <li><strong>Contextualization / Presentation:</strong> Texto/áudio com foco em Meaning, Form e Pron.</li>
                             <li><strong>Controlled Practice:</strong> Exercícios guiados.</li>
                             <li><strong>Freer Practice:</strong> Produção autônoma.</li>
                         </ul>
@@ -116,10 +116,10 @@
                         <h4 class="font-bold text-[#F48FB1] border-b border-[#6B3A7E]/40 pb-1">2. Habilidades Receptivas</h4>
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
                             <li><strong>Lead-in:</strong> Introdução e engajamento.</li>
-                            <li><strong>Pre-teaching Vocab:</strong> Vocabulário essencial.</li>
+                            <li><strong>Pre-teaching Vocabulary:</strong> Vocabulário essencial.</li>
                             <li><strong>Gist Reading / Listening:</strong> Compreensão global.</li>
                             <li><strong>Detailed Reading / Listening:</strong> Busca de detalhes.</li>
-                            <li><strong>Follow-up:</strong> Reação e discussão.</li>
+                            <li><strong>Follow-up / Post-task:</strong> Reação e discussão.</li>
                         </ul>
                     </div>
 
@@ -129,7 +129,7 @@
                         <ul class="space-y-1 text-[#D8B4D9]/80 list-disc list-inside">
                             <li><strong>Lead-in:</strong> Apresentação do tema.</li>
                             <li><strong>Exposure to a Model:</strong> Texto/áudio modelo.</li>
-                            <li><strong>Language / Prep:</strong> Expressões e ideias.</li>
+                            <li><strong>Language / Preparation:</strong> Expressões e ideias.</li>
                             <li><strong>Task / Production:</strong> Execução da tarefa.</li>
                             <li><strong>Feedback & Error Correction:</strong> Correção coletiva.</li>
                         </ul>
@@ -203,11 +203,38 @@
 
                 <!-- ÁREA DE CONSTRUÇÃO DINÂMICA DE ETAPAS (COLUNAS) -->
                 <div class="space-y-3 pt-2">
-                    <div class="flex justify-between items-center">
+                    <div class="flex flex-wrap justify-between items-center gap-3">
                         <label class="text-xs text-[#D8B4D9]/80 block font-bold">Etapas da Aula em Colunas</label>
-                        <button type="button" id="add-column-btn" onclick="addCustomColumn('')" class="hidden text-xs bg-[#502064] hover:bg-[#6B3A7E] text-[#F48FB1] px-3 py-1 rounded border border-[#6B3A7E] transition items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Adicionar Nova Etapa
-                        </button>
+                        
+                        <!-- Menu de Seleção Rápida de Etapas para o Free Class -->
+                        <div id="add-column-wrapper" class="hidden items-center gap-2">
+                            <select id="stage-preset-select" class="text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-[#F48FB1] px-2 py-1.5 rounded-lg focus:outline-none">
+                                <option value="">-- Escolher etapa de qualquer sistema --</option>
+                                <optgroup label="Foco em Sistema (PPP)">
+                                    <option value="Lead-in">Lead-in</option>
+                                    <option value="Contextualization / Presentation (Meaning, Form, Pron)">Contextualization / Presentation (Meaning, Form, Pron)</option>
+                                    <option value="Controlled Practice">Controlled Practice</option>
+                                    <option value="Freer Practice / Production">Freer Practice / Production</option>
+                                </optgroup>
+                                <optgroup label="Habilidades Receptivas">
+                                    <option value="Lead-in">Lead-in</option>
+                                    <option value="Pre-teaching Vocabulary">Pre-teaching Vocabulary</option>
+                                    <option value="Gist Reading / Listening (Skimming)">Gist Reading / Listening (Skimming)</option>
+                                    <option value="Detailed Reading / Listening (Scanning)">Detailed Reading / Listening (Scanning)</option>
+                                    <option value="Follow-up / Post-task">Follow-up / Post-task</option>
+                                </optgroup>
+                                <optgroup label="Habilidades Produtivas">
+                                    <option value="Lead-in">Lead-in</option>
+                                    <option value="Exposure to a Model">Exposure to a Model</option>
+                                    <option value="Language / Preparation">Language / Preparation</option>
+                                    <option value="Task / Production">Task / Production</option>
+                                    <option value="Feedback & Error Correction">Feedback & Error Correction</option>
+                                </optgroup>
+                            </select>
+                            <button type="button" onclick="addSelectedPresetColumn()" class="text-xs bg-[#502064] hover:bg-[#6B3A7E] text-[#F48FB1] px-3 py-1.5 rounded-lg border border-[#6B3A7E] transition flex items-center gap-1 font-medium whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i> Adicionar Etapa
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Container onde as colunas com editores Quill serão geradas -->
@@ -344,16 +371,16 @@
         // GERAR COLUNAS NO FORMULÁRIO
         window.buildColumns = function(focusType, savedColumnsData = null) {
             const container = document.getElementById('dynamic-columns-container');
-            const addBtn = document.getElementById('add-column-btn');
+            const addWrapper = document.getElementById('add-column-wrapper');
             container.innerHTML = '';
             quillInstances = [];
 
             if (focusType === 'Free Class') {
-                addBtn.classList.remove('hidden');
-                addBtn.classList.add('flex');
+                addWrapper.classList.remove('hidden');
+                addWrapper.classList.add('flex');
             } else {
-                addBtn.classList.add('hidden');
-                addBtn.classList.remove('flex');
+                addWrapper.classList.add('hidden');
+                addWrapper.classList.remove('flex');
             }
 
             let stagesToBuild = [];
@@ -437,13 +464,17 @@
             buildColumns(focusVal);
         };
 
-        window.addCustomColumn = function(title = "Nova Etapa") {
+        window.addSelectedPresetColumn = function() {
+            const selectEl = document.getElementById('stage-preset-select');
+            const selectedVal = selectEl.value;
+            const titleToAdd = selectedVal ? selectedVal : "Nova Etapa";
+
             // Salvar estado atual de todas as colunas antes de recriar
             const currentData = quillInstances.map(item => ({
                 title: item.getTitle(),
                 html: item.quill.root.innerHTML
             }));
-            currentData.push({ title: title || "Nova Etapa", html: "" });
+            currentData.push({ title: titleToAdd, html: "" });
             
             const container = document.getElementById('dynamic-columns-container');
             container.innerHTML = '';
@@ -452,6 +483,8 @@
             currentData.forEach((stage, index) => {
                 renderColumnElement(stage.title, stage.html, true, index);
             });
+
+            selectEl.value = ""; // Reseta o select
         };
 
         window.removeColumn = function(indexToRemove) {
