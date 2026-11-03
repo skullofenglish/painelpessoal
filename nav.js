@@ -18,8 +18,6 @@ function renderGlobalNavigation() {
     let currentPath = window.location.pathname.split('/').pop();
     if (!currentPath || currentPath === '' || currentPath === '/') currentPath = 'index.html';
 
-    localStorage.setItem('lastActivePage', currentPath);
-
     container.innerHTML = '';
 
     navigationItems.forEach(item => {
@@ -27,17 +25,7 @@ function renderGlobalNavigation() {
         const isActive = isIndexActive || currentPath === item.href;
 
         const a = document.createElement('a');
-        
-        // Se for o index, força o link para a raiz exata do GitHub Pages
-        if (item.href === 'index.html') {
-            const pathParts = window.location.pathname.split('/');
-            // Remove o último segmento (a página atual) para deixar apenas a pasta raiz do projeto
-            pathParts.pop();
-            a.href = pathParts.join('/') + '/';
-        } else {
-            a.href = item.href;
-        }
-
+        a.href = item.href;
         a.className = `px-3 py-1.5 text-sm font-medium transition whitespace-nowrap border-b-2 flex items-center gap-1.5 ${
             isActive 
                 ? 'border-[#F48FB1] text-[#F48FB1] font-bold' 
