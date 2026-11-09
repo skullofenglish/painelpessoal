@@ -251,40 +251,80 @@
             </form>
         </div>
 
-        <!-- BARRA DE PESQUISA E FILTROS DE PLANOS -->
-        <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/40 flex flex-col lg:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-2 w-full lg:w-auto">
-                <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-sm"></i> Meus Planos</span>
-                <span id="plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-                <!-- Pesquisa por Palavra-Chave -->
-                <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
-                    <input type="text" id="search-input" oninput="renderPlansList()" placeholder="Buscar por tema, texto ou aluno..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
-                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-xs text-neutral-500"></i>
+        <!-- SESSÃO 1: PLANOS ATUAIS -->
+        <div class="space-y-4 pt-4">
+            <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/40 flex flex-col lg:flex-row justify-between items-center gap-3">
+                <div class="flex items-center gap-2 w-full lg:w-auto">
+                    <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-sm"></i> Planos Atuais</span>
+                    <span id="current-plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
                 </div>
 
-                <!-- Filtro por Aluno -->
-                <select id="filter-aluno" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
-                    <option value="">Todos os Alunos</option>
-                </select>
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
+                    <!-- Pesquisa por Palavra-Chave -->
+                    <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+                        <input type="text" id="search-input" oninput="renderPlansList()" placeholder="Buscar por tema, texto ou aluno..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-xs text-neutral-500"></i>
+                    </div>
 
-                <!-- Filtro por Foco CELTA -->
-                <select id="filter-focus" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
-                    <option value="">Todos os Focos</option>
-                    <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
-                    <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
-                    <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
-                    <option value="Free Class">Free Class</option>
-                    <option value="Revisão / Livre">Revisão / Livre</option>
-                </select>
+                    <!-- Filtro por Aluno -->
+                    <select id="filter-aluno" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                        <option value="">Todos os Alunos</option>
+                    </select>
+
+                    <!-- Filtro por Foco CELTA -->
+                    <select id="filter-focus" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                        <option value="">Todos os Focos</option>
+                        <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
+                        <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
+                        <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
+                        <option value="Free Class">Free Class</option>
+                        <option value="Revisão / Livre">Revisão / Livre</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- GRADE DE CARDS: PLANOS ATUAIS -->
+            <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <p class="text-neutral-400 italic col-span-full">Carregando planos atuais...</p>
             </div>
         </div>
 
-        <!-- GRADE DE CARDS DE PLANOS DE AULA -->
-        <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-            <p class="text-neutral-400 italic col-span-full">Carregando planos de aula...</p>
+        <!-- SESSÃO 2: AULAS MINISTRADAS (PAST LESSONS) -->
+        <div class="space-y-4 pt-8 border-t border-[#6B3A7E]/50">
+            <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/40 flex flex-col lg:flex-row justify-between items-center gap-3">
+                <div class="flex items-center gap-2 w-full lg:w-auto">
+                    <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-box-archive text-sm"></i> Aulas Ministradas (Past Lessons)</span>
+                    <span id="past-plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
+                    <!-- Pesquisa por Palavra-Chave Past Lessons -->
+                    <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+                        <input type="text" id="past-search-input" oninput="renderPlansList()" placeholder="Buscar no histórico..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-xs text-neutral-500"></i>
+                    </div>
+
+                    <!-- Filtro por Aluno Past Lessons -->
+                    <select id="past-filter-aluno" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                        <option value="">Todos os Alunos</option>
+                    </select>
+
+                    <!-- Filtro por Foco CELTA Past Lessons -->
+                    <select id="past-filter-focus" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                        <option value="">Todos os Focos</option>
+                        <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
+                        <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
+                        <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
+                        <option value="Free Class">Free Class</option>
+                        <option value="Revisão / Livre">Revisão / Livre</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- GRADE DE CARDS: AULAS MINISTRADAS -->
+            <div id="past-plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <p class="text-neutral-400 italic col-span-full">Nenhuma aula ministrada no histórico.</p>
+            </div>
         </div>
 
     </main>
@@ -367,6 +407,17 @@
             }
             return String(val);
         }
+
+        // ALTERAÇÃO DIRETA DE STATUS VIA SELECT NO CARD
+        window.updatePlanStatusDirect = async function(id, newStatus) {
+            try {
+                await updateDoc(doc(db, "lessonplans", id), {
+                    status: newStatus
+                });
+            } catch (err) {
+                console.error("Erro ao atualizar status:", err);
+            }
+        };
 
         // GERAR COLUNAS NO FORMULÁRIO
         window.buildColumns = function(focusType, savedColumnsData = null) {
@@ -469,7 +520,6 @@
             const selectedVal = selectEl.value;
             const titleToAdd = selectedVal ? selectedVal : "Nova Etapa";
 
-            // Salvar estado atual de todas as colunas antes de recriar
             const currentData = quillInstances.map(item => ({
                 title: item.getTitle(),
                 html: item.quill.root.innerHTML
@@ -484,7 +534,7 @@
                 renderColumnElement(stage.title, stage.html, true, index);
             });
 
-            selectEl.value = ""; // Reseta o select
+            selectEl.value = "";
         };
 
         window.removeColumn = function(indexToRemove) {
@@ -516,7 +566,6 @@
 
             if (newIndex < 0 || newIndex >= currentData.length) return;
 
-            // Troca de posição
             const temp = currentData[index];
             currentData[index] = currentData[newIndex];
             currentData[newIndex] = temp;
@@ -534,10 +583,14 @@
         onSnapshot(query(collection(db, "alunos")), (snapshot) => {
             const datalist = document.getElementById('alunos-list');
             const filterAluno = document.getElementById('filter-aluno');
+            const pastFilterAluno = document.getElementById('past-filter-aluno');
+            
             const currentFilterVal = filterAluno.value;
+            const currentPastFilterVal = pastFilterAluno.value;
             
             datalist.innerHTML = '';
             filterAluno.innerHTML = '<option value="">Todos os Alunos</option>';
+            pastFilterAluno.innerHTML = '<option value="">Todos os Alunos</option>';
 
             const nomes = new Set();
             snapshot.forEach(docSnap => {
@@ -554,9 +607,15 @@
                 filterOpt.value = nome;
                 filterOpt.innerText = nome;
                 filterAluno.appendChild(filterOpt);
+
+                const pastFilterOpt = document.createElement('option');
+                pastFilterOpt.value = nome;
+                pastFilterOpt.innerText = nome;
+                pastFilterAluno.appendChild(pastFilterOpt);
             });
 
             filterAluno.value = currentFilterVal;
+            pastFilterAluno.value = currentPastFilterVal;
         });
 
         // FORM SUBMIT (CRIAR OU EDITAR)
@@ -570,7 +629,6 @@
             const topic = document.getElementById('plan-topic').value;
             const status = document.getElementById('plan-status').value;
             
-            // Coleta os dados de todas as colunas dinâmicas
             const columnsData = quillInstances.map(item => ({
                 title: item.getTitle(),
                 html: item.quill.root.innerHTML
@@ -663,16 +721,23 @@
         });
 
         window.renderPlansList = function() {
+            // --- SESSÃO 1: PLANOS ATUAIS ---
             const grid = document.getElementById('plans-grid');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
             const filterAlunoVal = document.getElementById('filter-aluno').value;
             const filterFocusVal = document.getElementById('filter-focus').value;
-            const countBadge = document.getElementById('plans-count-badge');
+            const countBadge = document.getElementById('current-plans-count-badge');
 
             grid.innerHTML = '';
             let displayedCount = 0;
 
-            const filtered = cachedPlans.filter(plan => {
+            const currentPlans = cachedPlans.filter(plan => {
+                const status = plan.status || '🔵 Rascunho';
+                // Apenas rascunhos ou prontos ficam em Planos Atuais
+                return !status.includes('Concluído / Ministrado');
+            });
+
+            const filteredCurrent = currentPlans.filter(plan => {
                 const jsonCols = JSON.stringify(plan.columnsData || '');
                 const matchesSearch = (plan.aluno || '').toLowerCase().includes(searchVal) ||
                                       (plan.topic || '').toLowerCase().includes(searchVal) ||
@@ -684,92 +749,137 @@
                 return matchesSearch && matchesAluno && matchesFocus;
             });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum plano de aula encontrado.</p>`;
+            if (filteredCurrent.length === 0) {
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum plano atual encontrado.</p>`;
                 countBadge.innerText = '0';
-                return;
+            } else {
+                filteredCurrent.forEach(data => {
+                    displayedCount++;
+                    grid.appendChild(createPlanCardElement(data));
+                });
+                countBadge.innerText = displayedCount;
             }
 
-            filtered.forEach(data => {
-                displayedCount++;
-                const id = data.id;
-                const dateTxt = formatDateDisplay(data.date);
-                const timeTxt = data.time ? ` às ${data.time}` : '';
+            // --- SESSÃO 2: AULAS MINISTRADAS (PAST LESSONS) ---
+            const pastGrid = document.getElementById('past-plans-grid');
+            const pastSearchVal = document.getElementById('past-search-input').value.toLowerCase();
+            const pastFilterAlunoVal = document.getElementById('past-filter-aluno').value;
+            const pastFilterFocusVal = document.getElementById('past-filter-focus').value;
+            const pastCountBadge = document.getElementById('past-plans-count-badge');
 
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start col-span-1 md:col-span-2";
-                card.style.backgroundColor = "#262626";
+            pastGrid.innerHTML = '';
+            let pastDisplayedCount = 0;
 
-                const focusBadgeColor = (data.focus || '').includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
-                                       (data.focus || '').includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
-                                       (data.focus || '').includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
-                                       (data.focus || '').includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+            const pastPlans = cachedPlans.filter(plan => {
+                const status = plan.status || '🔵 Rascunho';
+                return status.includes('Concluído / Ministrado');
+            });
 
-                // Renderização das colunas dentro do card
-                let columnsCardHtml = '';
-                if (Array.isArray(data.columnsData) && data.columnsData.length > 0) {
-                    columnsCardHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
-                    data.columnsData.forEach(col => {
-                        columnsCardHtml += `
-                            <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-1">
-                                <h5 class="font-bold text-[#F48FB1] text-xs border-b border-[#6B3A7E]/30 pb-1">${col.title}</h5>
-                                <div class="text-xs text-[#D8B4D9] ql-editor" style="max-height: 250px; overflow-y: auto;">
-                                    ${col.html || '<em class="text-neutral-500">Vazio</em>'}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    columnsCardHtml += `</div>`;
-                } else {
-                    columnsCardHtml = `<em class="text-neutral-500 text-xs">Sem etapas cadastradas.</em>`;
-                }
+            const filteredPast = pastPlans.filter(plan => {
+                const jsonCols = JSON.stringify(plan.columnsData || '');
+                const matchesSearch = (plan.aluno || '').toLowerCase().includes(pastSearchVal) ||
+                                      (plan.topic || '').toLowerCase().includes(pastSearchVal) ||
+                                      jsonCols.toLowerCase().includes(pastSearchVal);
 
-                card.innerHTML = `
-                    <div>
-                        <!-- CABEÇALHO DO CARD -->
-                        <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2 mb-3">
-                            <div class="flex items-center gap-2">
-                                <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
-                                    <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
-                                </button>
-                                <div>
-                                    <h3 class="font-title text-lg sm:text-xl text-[#F48FB1]">${data.aluno || 'Aluno não informado'}</h3>
-                                    <div class="text-xs text-[#D8B4D9]/80 font-medium">${data.topic || 'Sem tópico'}</div>
-                                </div>
-                            </div>
-                            <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] px-2 py-0.5 rounded border ${focusBadgeColor}">${data.focus || ''}</span>
-                                <span class="text-[10px] text-neutral-400">${data.status || '🔵 Rascunho'}</span>
+                const matchesAluno = !pastFilterAlunoVal || plan.aluno === pastFilterAlunoVal;
+                const matchesFocus = !pastFilterFocusVal || plan.focus === pastFilterFocusVal;
+
+                return matchesSearch && matchesAluno && matchesFocus;
+            });
+
+            if (filteredPast.length === 0) {
+                pastGrid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma aula ministrada encontrada.</p>`;
+                pastCountBadge.innerText = '0';
+            } else {
+                filteredPast.forEach(data => {
+                    pastDisplayedCount++;
+                    pastGrid.appendChild(createPlanCardElement(data));
+                });
+                pastCountBadge.innerText = pastDisplayedCount;
+            }
+        };
+
+        function createPlanCardElement(data) {
+            const id = data.id;
+            const dateTxt = formatDateDisplay(data.date);
+            const timeTxt = data.time ? ` às ${data.time}` : '';
+            const currentStatus = data.status || '🔵 Rascunho';
+
+            const card = document.createElement('div');
+            card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start col-span-1 md:col-span-2";
+            card.style.backgroundColor = "#262626";
+
+            const focusBadgeColor = (data.focus || '').includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
+                                   (data.focus || '').includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
+                                   (data.focus || '').includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
+                                   (data.focus || '').includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+
+            // Renderização das colunas dentro do card
+            let columnsCardHtml = '';
+            if (Array.isArray(data.columnsData) && data.columnsData.length > 0) {
+                columnsCardHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
+                data.columnsData.forEach(col => {
+                    columnsCardHtml += `
+                        <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-1">
+                            <h5 class="font-bold text-[#F48FB1] text-xs border-b border-[#6B3A7E]/30 pb-1">${col.title}</h5>
+                            <div class="text-xs text-[#D8B4D9] ql-editor" style="max-height: 250px; overflow-y: auto;">
+                                ${col.html || '<em class="text-neutral-500">Vazio</em>'}
                             </div>
                         </div>
+                    `;
+                });
+                columnsCardHtml += `</div>`;
+            } else {
+                columnsCardHtml = `<em class="text-neutral-500 text-xs">Sem etapas cadastradas.</em>`;
+            }
 
-                        <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
-                        <div id="card-body-${id}" style="display: block;" class="space-y-3">
-                            <div class="text-xs text-[#D8B4D9]/60 italic flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-day"></i> Data: ${dateTxt}${timeTxt}
+            card.innerHTML = `
+                <div>
+                    <!-- CABEÇALHO DO CARD -->
+                    <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2 mb-3 gap-2">
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
+                                <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
+                            </button>
+                            <div>
+                                <h3 class="font-title text-lg sm:text-xl text-[#F48FB1]">${data.aluno || 'Aluno não informado'}</h3>
+                                <div class="text-xs text-[#D8B4D9]/80 font-medium">${data.topic || 'Sem tópico'}</div>
                             </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-1.5">
+                            <span class="text-[10px] px-2 py-0.5 rounded border ${focusBadgeColor}">${data.focus || ''}</span>
+                            <select onchange="updatePlanStatusDirect('${id}', this.value)" class="text-[10px] bg-[#1A1A1A] border border-[#6B3A7E] text-[#D8B4D9] rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#F48FB1] cursor-pointer">
+                                <option value="🔵 Rascunho" ${currentStatus === '🔵 Rascunho' ? 'selected' : ''}>🔵 Rascunho</option>
+                                <option value="🟢 Pronto para Aula" ${currentStatus === '🟢 Pronto para Aula' ? 'selected' : ''}>🟢 Pronto para Aula</option>
+                                <option value="🟣 Concluído / Ministrado" ${currentStatus === '🟣 Concluído / Ministrado' ? 'selected' : ''}>🟣 Concluído / Ministrado</option>
+                            </select>
+                        </div>
+                    </div>
 
-                            <!-- COLUNAS DO PLANO -->
-                            ${columnsCardHtml}
+                    <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
+                    <div id="card-body-${id}" style="display: block;" class="space-y-3">
+                        <div class="text-xs text-[#D8B4D9]/60 italic flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-day"></i> Data: ${dateTxt}${timeTxt}
+                        </div>
 
-                            <!-- RODAPÉ DE AÇÕES -->
-                            <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center text-xs">
-                                <button onclick="duplicatePlan('${id}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
-                                    <i class="fa-solid fa-copy"></i> Duplicar Plano
-                                </button>
-                                <div class="flex gap-2">
-                                    <button onclick="startEditPlan('${id}')" class="text-neutral-400 hover:text-[#F48FB1] transition flex items-center gap-1"><i class="fa-solid fa-pen"></i> Editar</button>
-                                    <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
-                                </div>
+                        <!-- COLUNAS DO PLANO -->
+                        ${columnsCardHtml}
+
+                        <!-- RODAPÉ DE AÇÕES -->
+                        <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center text-xs">
+                            <button onclick="duplicatePlan('${id}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
+                                <i class="fa-solid fa-copy"></i> Duplicar Plano
+                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="startEditPlan('${id}')" class="text-neutral-400 hover:text-[#F48FB1] transition flex items-center gap-1"><i class="fa-solid fa-pen"></i> Editar</button>
+                                <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </div>
                         </div>
                     </div>
-                `;
+                </div>
+            `;
 
-                grid.appendChild(card);
-            });
-
-            countBadge.innerText = displayedCount;
+            return card;
         }
 
         // Inicializar com o foco padrão ao abrir a página
