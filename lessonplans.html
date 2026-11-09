@@ -596,21 +596,19 @@
             } catch (err) { console.error("Erro ao salvar plano:", err); }
         });
 
-        window.startEditPlan = function(id, aluno, date, time, focus, topic, status, columnsDataJson) {
-            document.getElementById('editing-id').value = id;
-            document.getElementById('plan-aluno').value = aluno;
-            document.getElementById('plan-date').value = date;
-            document.getElementById('plan-time').value = time;
-            document.getElementById('plan-focus').value = focus;
-            document.getElementById('plan-topic').value = topic;
-            document.getElementById('plan-status').value = status;
-            
-            let parsedColumns = [];
-            try {
-                parsedColumns = JSON.parse(decodeURIComponent(columnsDataJson));
-            } catch(e) { parsedColumns = []; }
+        window.startEditPlan = function(id) {
+            const plan = cachedPlans.find(p => p.id === id);
+            if (!plan) return;
 
-            buildColumns(focus, parsedColumns);
+            document.getElementById('editing-id').value = plan.id;
+            document.getElementById('plan-aluno').value = plan.aluno || '';
+            document.getElementById('plan-date').value = plan.date || '';
+            document.getElementById('plan-time').value = plan.time || '';
+            document.getElementById('plan-focus').value = plan.focus || 'Sistema (PPP - Gramática/Vocab)';
+            document.getElementById('plan-topic').value = plan.topic || '';
+            document.getElementById('plan-status').value = plan.status || '🔵 Rascunho';
+            
+            buildColumns(plan.focus, plan.columnsData || []);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Plano de Aula`;
             document.getElementById('submit-btn').innerText = "Atualizar Plano";
@@ -618,21 +616,19 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        window.duplicatePlan = function(aluno, focus, topic, columnsDataJson) {
+        window.duplicatePlan = function(id) {
+            const plan = cachedPlans.find(p => p.id === id);
+            if (!plan) return;
+
             document.getElementById('editing-id').value = '';
-            document.getElementById('plan-aluno').value = aluno;
+            document.getElementById('plan-aluno').value = plan.aluno || '';
             document.getElementById('plan-date').value = todayStr;
             document.getElementById('plan-time').value = '';
-            document.getElementById('plan-focus').value = focus;
-            document.getElementById('plan-topic').value = `${topic} (Cópia)`;
+            document.getElementById('plan-focus').value = plan.focus || 'Sistema (PPP - Gramática/Vocab)';
+            document.getElementById('plan-topic').value = `${plan.topic || ''} (Cópia)`;
             document.getElementById('plan-status').value = '🔵 Rascunho';
 
-            let parsedColumns = [];
-            try {
-                parsedColumns = JSON.parse(decodeURIComponent(columnsDataJson));
-            } catch(e) { parsedColumns = []; }
-
-            buildColumns(focus, parsedColumns);
+            buildColumns(plan.focus, plan.columnsData || []);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-copy text-base"></i> Duplicar Plano de Aula`;
             document.getElementById('submit-btn').innerText = "Salvar Novo Plano";
@@ -697,7 +693,6 @@
             filtered.forEach(data => {
                 displayedCount++;
                 const id = data.id;
-                const safeColumnsJson = encodeURIComponent(JSON.stringify(data.columnsData || []));
                 const dateTxt = formatDateDisplay(data.date);
                 const timeTxt = data.time ? ` às ${data.time}` : '';
 
@@ -705,10 +700,10 @@
                 card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start col-span-1 md:col-span-2";
                 card.style.backgroundColor = "#262626";
 
-                const focusBadgeColor = data.focus.includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
-                                       data.focus.includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
-                                       data.focus.includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
-                                       data.focus.includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
+                const focusBadgeColor = (data.focus || '').includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
+                                       (data.focus || '').includes('Receptivas') ? 'bg-cyan-950 text-cyan-300 border-cyan-800' :
+                                       (data.focus || '').includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
+                                       (data.focus || '').includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
 
                 // Renderização das colunas dentro do card
                 let columnsCardHtml = '';
@@ -743,7 +738,7 @@
                                 </div>
                             </div>
                             <div class="flex flex-col items-end gap-1">
-                                <span class="text-[10px] px-2 py-0.5 rounded border ${focusBadgeColor}">${data.focus}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded border ${focusBadgeColor}">${data.focus || ''}</span>
                                 <span class="text-[10px] text-neutral-400">${data.status || '🔵 Rascunho'}</span>
                             </div>
                         </div>
@@ -759,12 +754,12 @@
 
                             <!-- RODAPÉ DE AÇÕES -->
                             <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center text-xs">
-                                <button onclick="duplicatePlan('${(data.aluno || '').replace(/'/g, "\\'")}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${safeColumnsJson}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
+                                <button onclick="duplicatePlan('${id}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
                                     <i class="fa-solid fa-copy"></i> Duplicar Plano
                                 </button>
                                 <div class="flex gap-2">
-                                    <button onclick="startEditPlan('${id}', '${(data.aluno || '').replace(/'/g, "\\'")}', '${data.date}', '${data.time || ''}', '${data.focus}', '${(data.topic || '').replace(/'/g, "\\'")}', '${data.status || '🔵 Rascunho'}', '${safeColumnsJson}')" class="text-neutral-400 hover:text-[#F48FB1] transition"><i class="fa-solid fa-pen"></i> Editar</button>
-                                    <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition"><i class="fa-solid fa-trash"></i> Excluir</button>
+                                    <button onclick="startEditPlan('${id}')" class="text-neutral-400 hover:text-[#F48FB1] transition flex items-center gap-1"><i class="fa-solid fa-pen"></i> Editar</button>
+                                    <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
                                 </div>
                             </div>
                         </div>
