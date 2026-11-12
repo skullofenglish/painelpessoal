@@ -48,7 +48,7 @@
             color: #D8B4D9 !important;
             border-bottom-left-radius: 0.5rem;
             border-bottom-right-radius: 0.5rem;
-            min-height: 150px;
+            min-height: 140px;
             font-family: inherit;
         }
         .ql-stroke { stroke: #D8B4D9 !important; }
@@ -78,9 +78,9 @@
                 </h1>
             </div>
             
-            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full flex items-center gap-1 border border-[#F48FB1]/30">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Sincronizado na Nuvem</span>
+            <div id="sync-status" class="text-xs bg-[#6B0F1A] text-[#D8B4D9] px-3 py-1 rounded-full flex items-center gap-1.5 border border-[#F48FB1]/30">
+                <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="sync-text">Conectando à Nuvem...</span>
             </div>
         </div>
     </header>
@@ -90,7 +90,7 @@
 
         <!-- ABA RETRÁTIL: GUIA CELTA DE CONSULTA RÁPIDA -->
         <div style="background-color: #262626;" class="rounded-xl shadow-lg border border-[#6B3A7E]/60 overflow-hidden">
-            <button onclick="toggleCeltaGuide()" class="w-full p-4 flex items-center justify-between text-left hover:bg-[#331c42] transition">
+            <button type="button" onclick="toggleCeltaGuide()" class="w-full p-4 flex items-center justify-between text-left hover:bg-[#331c42] transition">
                 <div class="flex items-center gap-2">
                     <span class="text-[#F48FB1] font-title text-lg sm:text-xl flex items-center gap-2"><i class="fa-solid fa-graduation-cap text-base"></i> Guia Rápido de Etapas CELTA</span>
                     <span class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">Referência</span>
@@ -148,7 +148,7 @@
                 <h2 id="form-title" class="text-xl font-title text-[#F48FB1] flex items-center gap-2">
                     <i class="fa-solid fa-pen-nib text-base"></i> Novo Plano de Aula
                 </h2>
-                <button id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
+                <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden text-xs text-rose-400 hover:underline">Cancelar Edição</button>
             </div>
 
             <form id="plan-form" class="space-y-4">
@@ -174,7 +174,7 @@
 
                     <div>
                         <label class="text-xs text-[#D8B4D9]/80 mb-1 block">Foco da Aula</label>
-                        <select id="plan-focus" onchange="onFocusChange()" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
+                        <select id="plan-focus" class="w-full px-3 py-2 bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F48FB1]">
                             <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP - Gramática/Vocab)</option>
                             <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas (Reading/Listening)</option>
                             <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas (Speaking/Writing)</option>
@@ -201,38 +201,57 @@
                     </div>
                 </div>
 
-                <!-- ÁREA DE CONSTRUÇÃO DINÂMICA DE ETAPAS (COLUNAS) -->
+                <!-- ÁREA DE CONSTRUÇÃO DINÂMICA E LIVRE DE ETAPAS -->
                 <div class="space-y-3 pt-2">
-                    <div class="flex flex-wrap justify-between items-center gap-3">
-                        <label class="text-xs text-[#D8B4D9]/80 block font-bold">Etapas da Aula em Colunas</label>
-                        
-                        <!-- Menu de Seleção Rápida de Etapas para o Free Class -->
-                        <div id="add-column-wrapper" class="hidden items-center gap-2">
-                            <select id="stage-preset-select" class="text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-[#F48FB1] px-2 py-1.5 rounded-lg focus:outline-none">
-                                <option value="">-- Escolher etapa de qualquer sistema --</option>
-                                <optgroup label="Foco em Sistema (PPP)">
-                                    <option value="Lead-in">Lead-in</option>
-                                    <option value="Contextualization / Presentation (Meaning, Form, Pron)">Contextualization / Presentation (Meaning, Form, Pron)</option>
-                                    <option value="Controlled Practice">Controlled Practice</option>
-                                    <option value="Freer Practice / Production">Freer Practice / Production</option>
-                                </optgroup>
-                                <optgroup label="Habilidades Receptivas">
-                                    <option value="Lead-in">Lead-in</option>
-                                    <option value="Pre-teaching Vocabulary">Pre-teaching Vocabulary</option>
-                                    <option value="Gist Reading / Listening (Skimming)">Gist Reading / Listening (Skimming)</option>
-                                    <option value="Detailed Reading / Listening (Scanning)">Detailed Reading / Listening (Scanning)</option>
-                                    <option value="Follow-up / Post-task">Follow-up / Post-task</option>
-                                </optgroup>
-                                <optgroup label="Habilidades Produtivas">
-                                    <option value="Lead-in">Lead-in</option>
-                                    <option value="Exposure to a Model">Exposure to a Model</option>
-                                    <option value="Language / Preparation">Language / Preparation</option>
-                                    <option value="Task / Production">Task / Production</option>
-                                    <option value="Feedback & Error Correction">Feedback & Error Correction</option>
-                                </optgroup>
-                            </select>
-                            <button type="button" onclick="addSelectedPresetColumn()" class="text-xs bg-[#502064] hover:bg-[#6B3A7E] text-[#F48FB1] px-3 py-1.5 rounded-lg border border-[#6B3A7E] transition flex items-center gap-1 font-medium whitespace-nowrap">
-                                <i class="fa-solid fa-plus"></i> Adicionar Etapa
+                    <div class="bg-[#1A1A1A] p-3.5 rounded-xl border border-[#6B3A7E]/60 space-y-3">
+                        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-[#6B3A7E]/30 pb-2">
+                            <span class="text-xs text-[#F48FB1] font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-layer-group"></i> Montar Etapas da Aula (Clique para adicionar quantas quiser)
+                            </span>
+                            <span id="stages-counter-label" class="text-[11px] text-[#D8B4D9]/70">0 etapas adicionadas</span>
+                        </div>
+
+                        <!-- Botões rápidos organizados por categoria -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px]">
+                            <!-- Grupo 1: Sistema (PPP) -->
+                            <div class="space-y-1.5 bg-[#262626]/70 p-2.5 rounded-lg border border-[#6B3A7E]/30">
+                                <div class="font-bold text-[#F48FB1]/90 uppercase tracking-wider text-[10px]">Sistema (PPP)</div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" onclick="addStageColumn('Lead-in')" class="px-2 py-1 rounded bg-[#502064]/80 hover:bg-[#6B3A7E] text-white border border-[#6B3A7E] transition">+ Lead-in</button>
+                                    <button type="button" onclick="addStageColumn('Contextualization / Presentation (MFP)')" class="px-2 py-1 rounded bg-[#502064]/80 hover:bg-[#6B3A7E] text-white border border-[#6B3A7E] transition">+ Presentation (MFP)</button>
+                                    <button type="button" onclick="addStageColumn('Controlled Practice')" class="px-2 py-1 rounded bg-[#502064]/80 hover:bg-[#6B3A7E] text-white border border-[#6B3A7E] transition">+ Controlled Practice</button>
+                                    <button type="button" onclick="addStageColumn('Freer Practice / Production')" class="px-2 py-1 rounded bg-[#502064]/80 hover:bg-[#6B3A7E] text-white border border-[#6B3A7E] transition">+ Freer Practice</button>
+                                </div>
+                            </div>
+
+                            <!-- Grupo 2: Habilidades Receptivas -->
+                            <div class="space-y-1.5 bg-[#262626]/70 p-2.5 rounded-lg border border-cyan-900/40">
+                                <div class="font-bold text-cyan-300/90 uppercase tracking-wider text-[10px]">Receptivas (Read / Listen)</div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" onclick="addStageColumn('Pre-teaching Vocabulary')" class="px-2 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-200 border border-cyan-800 transition">+ Pre-teach Vocab</button>
+                                    <button type="button" onclick="addStageColumn('Gist Reading / Listening')" class="px-2 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-200 border border-cyan-800 transition">+ Gist Task</button>
+                                    <button type="button" onclick="addStageColumn('Detailed Reading / Listening')" class="px-2 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-200 border border-cyan-800 transition">+ Detailed Task</button>
+                                    <button type="button" onclick="addStageColumn('Follow-up / Post-task')" class="px-2 py-1 rounded bg-cyan-950/90 hover:bg-cyan-900 text-cyan-200 border border-cyan-800 transition">+ Follow-up</button>
+                                </div>
+                            </div>
+
+                            <!-- Grupo 3: Habilidades Produtivas -->
+                            <div class="space-y-1.5 bg-[#262626]/70 p-2.5 rounded-lg border border-amber-900/40">
+                                <div class="font-bold text-amber-300/90 uppercase tracking-wider text-[10px]">Produtivas (Speak / Write)</div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button" onclick="addStageColumn('Exposure to a Model')" class="px-2 py-1 rounded bg-amber-950/90 hover:bg-amber-900 text-amber-200 border border-amber-800 transition">+ Model Exposure</button>
+                                    <button type="button" onclick="addStageColumn('Language / Preparation')" class="px-2 py-1 rounded bg-amber-950/90 hover:bg-amber-900 text-amber-200 border border-amber-800 transition">+ Preparation</button>
+                                    <button type="button" onclick="addStageColumn('Task / Production')" class="px-2 py-1 rounded bg-amber-950/90 hover:bg-amber-900 text-amber-200 border border-amber-800 transition">+ Task / Production</button>
+                                    <button type="button" onclick="addStageColumn('Feedback & Error Correction')" class="px-2 py-1 rounded bg-amber-950/90 hover:bg-amber-900 text-amber-200 border border-amber-800 transition">+ Feedback / DEC</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Adicionar etapa livre / personalizada -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+                            <input type="text" id="custom-stage-title" placeholder="Ou digite o nome de uma etapa personalizada (ex: Warm-up, Homework, Game...)" onkeydown="if(event.key==='Enter'){event.preventDefault(); addCustomStageColumn();}" class="flex-grow px-3 py-1.5 text-xs bg-[#262626] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                            <button type="button" onclick="addCustomStageColumn()" class="text-xs bg-[#6B0F1A] hover:bg-[#801320] text-white px-4 py-1.5 rounded-lg border border-[#F48FB1]/30 transition flex items-center justify-center gap-1.5 font-medium whitespace-nowrap">
+                                <i class="fa-solid fa-plus"></i> Adicionar Etapa Livre
                             </button>
                         </div>
                     </div>
@@ -257,6 +276,7 @@
                 <div class="flex items-center gap-2 w-full lg:w-auto">
                     <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-book-bookmark text-sm"></i> Planos Atuais</span>
                     <span id="current-plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
+                    <span class="text-[11px] text-[#D8B4D9]/60 hidden sm:inline ml-1">(Clique em um card para abrir)</span>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
@@ -283,47 +303,60 @@
                 </div>
             </div>
 
-            <!-- GRADE DE CARDS: PLANOS ATUAIS -->
-            <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            <!-- GRADE DE CARDS COMPACTOS: PLANOS ATUAIS -->
+            <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                 <p class="text-neutral-400 italic col-span-full">Carregando planos atuais...</p>
             </div>
         </div>
 
-        <!-- SESSÃO 2: AULAS MINISTRADAS (PAST LESSONS) -->
-        <div class="space-y-4 pt-8 border-t border-[#6B3A7E]/50">
-            <div style="background-color: #262626;" class="p-4 rounded-xl border border-[#6B3A7E]/40 flex flex-col lg:flex-row justify-between items-center gap-3">
-                <div class="flex items-center gap-2 w-full lg:w-auto">
-                    <span class="text-[#F48FB1] font-title text-xl whitespace-nowrap flex items-center gap-2"><i class="fa-solid fa-box-archive text-sm"></i> Aulas Ministradas (Past Lessons)</span>
-                    <span id="past-plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
-                </div>
+        <!-- SESSÃO 2: CARD RETRÁTIL DE AULAS MINISTRADAS (PAST LESSONS) -->
+        <div class="pt-4">
+            <div style="background-color: #262626;" class="rounded-xl shadow-lg border border-[#6B3A7E]/60 overflow-hidden">
+                <!-- Cabeçalho Clicável do Card Retrátil -->
+                <button type="button" onclick="togglePastLessonsDrawer()" class="w-full p-4 flex items-center justify-between text-left hover:bg-[#331c42] transition">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-[#F48FB1] font-title text-lg sm:text-xl flex items-center gap-2">
+                            <i class="fa-solid fa-box-archive text-base"></i> Aulas Ministradas (Past Lessons)
+                        </span>
+                        <span id="past-plans-count-badge" class="text-xs bg-[#502064] text-[#D8B4D9] px-2.5 py-0.5 rounded-full border border-[#6B3A7E]">0</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-[#D8B4D9]/70">
+                        <span id="past-toggle-label" class="hidden sm:inline">Clique para expandir</span>
+                        <i id="past-toggle-icon" class="fa-solid fa-chevron-down text-[#F48FB1] transition-transform"></i>
+                    </div>
+                </button>
 
-                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
-                    <!-- Pesquisa por Palavra-Chave Past Lessons -->
-                    <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
-                        <input type="text" id="past-search-input" oninput="renderPlansList()" placeholder="Buscar no histórico..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
-                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-xs text-neutral-500"></i>
+                <!-- Conteúdo Interno Retrátil (Fechado por padrão) -->
+                <div id="past-lessons-content" class="hidden p-4 border-t border-[#6B3A7E]/50 space-y-4 bg-[#1E1E1E]/60">
+                    <!-- Barra de Filtros do Histórico -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-[#262626] p-3 rounded-lg border border-[#6B3A7E]/40">
+                        <span class="text-xs text-[#D8B4D9]/70">Filtrar histórico de aulas concluídas:</span>
+                        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+                            <div class="relative flex-grow sm:flex-grow-0 sm:w-60">
+                                <input type="text" id="past-search-input" oninput="renderPlansList()" placeholder="Buscar no histórico..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1A1A1A] border border-[#6B3A7E] text-white rounded-lg focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-xs text-neutral-500"></i>
+                            </div>
+
+                            <select id="past-filter-aluno" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                                <option value="">Todos os Alunos</option>
+                            </select>
+
+                            <select id="past-filter-focus" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
+                                <option value="">Todos os Focos</option>
+                                <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
+                                <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
+                                <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
+                                <option value="Free Class">Free Class</option>
+                                <option value="Revisão / Livre">Revisão / Livre</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <!-- Filtro por Aluno Past Lessons -->
-                    <select id="past-filter-aluno" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
-                        <option value="">Todos os Alunos</option>
-                    </select>
-
-                    <!-- Filtro por Foco CELTA Past Lessons -->
-                    <select id="past-filter-focus" onchange="renderPlansList()" class="px-3 py-1.5 bg-[#1A1A1A] border border-[#6B3A7E] text-white text-xs rounded-lg focus:outline-none">
-                        <option value="">Todos os Focos</option>
-                        <option value="Sistema (PPP - Gramática/Vocab)">Sistema (PPP)</option>
-                        <option value="Habilidades Receptivas (Reading/Listening)">Habilidades Receptivas</option>
-                        <option value="Habilidades Produtivas (Speaking/Writing)">Habilidades Produtivas</option>
-                        <option value="Free Class">Free Class</option>
-                        <option value="Revisão / Livre">Revisão / Livre</option>
-                    </select>
+                    <!-- GRADE DE CARDS COMPACTOS: AULAS MINISTRADAS -->
+                    <div id="past-plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                        <p class="text-neutral-400 italic col-span-full text-xs">Nenhuma aula ministrada no histórico.</p>
+                    </div>
                 </div>
-            </div>
-
-            <!-- GRADE DE CARDS: AULAS MINISTRADAS -->
-            <div id="past-plans-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <p class="text-neutral-400 italic col-span-full">Nenhuma aula ministrada no histórico.</p>
             </div>
         </div>
 
@@ -349,34 +382,24 @@
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('plan-date').value = todayStr;
 
-        // Mapeamento de Etapas Padrão por Foco
-        const defaultStagesMap = {
-            "Sistema (PPP - Gramática/Vocab)": [
-                "Lead-in",
-                "Contextualization / Presentation (Meaning, Form, Pron)",
-                "Controlled Practice",
-                "Freer Practice / Production"
-            ],
-            "Habilidades Receptivas (Reading/Listening)": [
-                "Lead-in",
-                "Pre-teaching Vocabulary",
-                "Gist Reading / Listening (Skimming)",
-                "Detailed Reading / Listening (Scanning)",
-                "Follow-up / Post-task"
-            ],
-            "Habilidades Produtivas (Speaking/Writing)": [
-                "Lead-in",
-                "Exposure to a Model",
-                "Language / Preparation",
-                "Task / Production",
-                "Feedback & Error Correction"
-            ],
-            "Revisão / Livre": [
-                "Conteúdo / Anotações da Aula"
-            ]
-        };
+        let quillInstances = []; // Armazenará { getTitle, quill }
+        let expandedCardIds = new Set(); // Mantém controle de quais cards compactos estão abertos
 
-        let quillInstances = []; // Armazenará { title, quill }
+        function setSyncStatus(state, message) {
+            const dot = document.getElementById('sync-dot');
+            const text = document.getElementById('sync-text');
+            if (!dot || !text) return;
+
+            text.innerText = message;
+            dot.className = "w-2 h-2 rounded-full";
+            if (state === 'ok') {
+                dot.classList.add('bg-emerald-400');
+            } else if (state === 'saving') {
+                dot.classList.add('bg-amber-400', 'animate-ping');
+            } else if (state === 'error') {
+                dot.classList.add('bg-rose-500');
+            }
+        }
 
         window.toggleCeltaGuide = function() {
             const content = document.getElementById('celta-guide-content');
@@ -385,18 +408,24 @@
             icon.classList.toggle('rotate-180');
         };
 
-        window.toggleCardCollapse = function(cardId) {
-            const bodyEl = document.getElementById(`card-body-${cardId}`);
-            const iconEl = document.getElementById(`card-icon-${cardId}`);
-            if (bodyEl && iconEl) {
-                if (bodyEl.style.display === 'none') {
-                    bodyEl.style.display = 'block';
-                    iconEl.classList.remove('rotate-180');
-                } else {
-                    bodyEl.style.display = 'none';
-                    iconEl.classList.add('rotate-180');
-                }
+        window.togglePastLessonsDrawer = function() {
+            const content = document.getElementById('past-lessons-content');
+            const icon = document.getElementById('past-toggle-icon');
+            const label = document.getElementById('past-toggle-label');
+            const isHidden = content.classList.toggle('hidden');
+            icon.classList.toggle('rotate-180');
+            if (label) {
+                label.innerText = isHidden ? 'Clique para expandir' : 'Clique para recolher';
             }
+        };
+
+        window.toggleCardExpand = function(cardId) {
+            if (expandedCardIds.has(cardId)) {
+                expandedCardIds.delete(cardId);
+            } else {
+                expandedCardIds.add(cardId);
+            }
+            renderPlansList();
         };
 
         function formatDateDisplay(val) {
@@ -408,75 +437,70 @@
             return String(val);
         }
 
+        function updateStagesCounter() {
+            const label = document.getElementById('stages-counter-label');
+            if (!label) return;
+            const count = quillInstances.length;
+            label.innerText = count === 1 ? '1 etapa adicionada' : `${count} etapas adicionadas`;
+        }
+
         // ALTERAÇÃO DIRETA DE STATUS VIA SELECT NO CARD
         window.updatePlanStatusDirect = async function(id, newStatus) {
             try {
+                setSyncStatus('saving', 'Atualizando status...');
                 await updateDoc(doc(db, "lessonplans", id), {
                     status: newStatus
                 });
+                setSyncStatus('ok', 'Sincronizado na Nuvem');
             } catch (err) {
                 console.error("Erro ao atualizar status:", err);
+                setSyncStatus('error', 'Erro ao atualizar status');
+                alert("Não foi possível atualizar o status: " + err.message);
             }
         };
 
-        // GERAR COLUNAS NO FORMULÁRIO
-        window.buildColumns = function(focusType, savedColumnsData = null) {
+        // RENDERIZA TODAS AS COLUNAS A PARTIR DE UM ARRAY [{ title, html }]
+        function rebuildAllColumns(stagesArray) {
             const container = document.getElementById('dynamic-columns-container');
-            const addWrapper = document.getElementById('add-column-wrapper');
             container.innerHTML = '';
             quillInstances = [];
 
-            if (focusType === 'Free Class') {
-                addWrapper.classList.remove('hidden');
-                addWrapper.classList.add('flex');
-            } else {
-                addWrapper.classList.add('hidden');
-                addWrapper.classList.remove('flex');
-            }
-
-            let stagesToBuild = [];
-
-            if (savedColumnsData && Array.isArray(savedColumnsData) && savedColumnsData.length > 0) {
-                stagesToBuild = savedColumnsData;
-            } else if (focusType === 'Free Class') {
-                stagesToBuild = [
-                    { title: "Warm-up", html: "" },
-                    { title: "Main Activity", html: "" }
-                ];
-            } else {
-                const defaultTitles = defaultStagesMap[focusType] || ["Etapa 1"];
-                stagesToBuild = defaultTitles.map(t => ({ title: t, html: "" }));
-            }
-
-            stagesToBuild.forEach((stage, index) => {
-                renderColumnElement(stage.title, stage.html, focusType === 'Free Class', index);
-            });
-        };
-
-        function renderColumnElement(title, htmlContent, isFreeClass, index) {
-            const container = document.getElementById('dynamic-columns-container');
-            const colId = `quill-col-${Date.now()}-${index}-${Math.floor(Math.random()*1000)}`;
-
-            const wrapper = document.createElement('div');
-            wrapper.className = "bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/50 space-y-2 flex flex-col";
-            wrapper.dataset.index = index;
-
-            let headerHtml = `<h4 class="font-bold text-[#F48FB1] text-xs pb-1 border-b border-[#6B3A7E]/30">${title}</h4>`;
-            if (isFreeClass) {
-                headerHtml = `
-                    <div class="flex items-center justify-between pb-1 border-b border-[#6B3A7E]/30 gap-2">
-                        <input type="text" value="${title.replace(/"/g, '&quot;')}" placeholder="Nome da Etapa" oninput="updateColumnTitle(this, ${index})" class="bg-[#262626] border border-[#6B3A7E] text-[#F48FB1] font-bold text-xs px-2 py-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
-                        <div class="flex items-center gap-1">
-                            <button type="button" onclick="moveColumn(${index}, -1)" title="Mover para Esquerda" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-left"></i></button>
-                            <button type="button" onclick="moveColumn(${index}, 1)" title="Mover para Direita" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-right"></i></button>
-                            <button type="button" onclick="removeColumn(${index})" title="Excluir Coluna" class="text-rose-400 hover:text-rose-300 px-1 text-xs"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+            if (!stagesArray || stagesArray.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-6 px-4 rounded-lg border border-dashed border-[#6B3A7E]/50 text-xs text-[#D8B4D9]/60">
+                        Nenhuma etapa adicionada ainda. Use os botões acima para montar as colunas da sua aula.
                     </div>
                 `;
+                updateStagesCounter();
+                return;
             }
 
+            stagesArray.forEach((stage, index) => {
+                renderColumnElement(stage.title, stage.html, index);
+            });
+            updateStagesCounter();
+        }
+
+        function renderColumnElement(title, htmlContent, index) {
+            const container = document.getElementById('dynamic-columns-container');
+            const colId = `quill-col-${Date.now()}-${index}-${Math.floor(Math.random() * 10000)}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/60 space-y-2 flex flex-col shadow";
+            wrapper.dataset.index = index;
+
+            const safeTitle = (title || 'Nova Etapa').replace(/"/g, '&quot;');
+
             wrapper.innerHTML = `
-                ${headerHtml}
+                <div class="flex items-center justify-between pb-1.5 border-b border-[#6B3A7E]/40 gap-2">
+                    <span class="text-[10px] font-bold text-[#F48FB1]/70 select-none">#${index + 1}</span>
+                    <input type="text" value="${safeTitle}" placeholder="Nome da Etapa" class="bg-[#262626] border border-[#6B3A7E]/70 text-[#F48FB1] font-bold text-xs px-2 py-1 rounded w-full focus:outline-none focus:ring-1 focus:ring-[#F48FB1]">
+                    <div class="flex items-center gap-1 shrink-0">
+                        <button type="button" onclick="moveColumn(${index}, -1)" title="Mover para Esquerda" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button type="button" onclick="moveColumn(${index}, 1)" title="Mover para Direita" class="text-neutral-400 hover:text-white px-1 text-xs"><i class="fa-solid fa-arrow-right"></i></button>
+                        <button type="button" onclick="removeColumn(${index})" title="Excluir Etapa" class="text-rose-400 hover:text-rose-300 px-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
                 <div id="${colId}" class="flex-grow"></div>
             `;
 
@@ -487,7 +511,7 @@
                 modules: {
                     toolbar: [
                         ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                         ['link', 'clean']
                     ]
                 },
@@ -500,83 +524,49 @@
 
             quillInstances.push({
                 getTitle: () => {
-                    if (isFreeClass) {
-                        const inputEl = wrapper.querySelector('input');
-                        return inputEl ? inputEl.value.trim() || 'Etapa sem nome' : title;
-                    }
-                    return title;
+                    const inputEl = wrapper.querySelector('input');
+                    return inputEl ? (inputEl.value.trim() || 'Etapa sem nome') : title;
                 },
                 quill: quillInstance
             });
         }
 
-        window.onFocusChange = function() {
-            const focusVal = document.getElementById('plan-focus').value;
-            buildColumns(focusVal);
-        };
-
-        window.addSelectedPresetColumn = function() {
-            const selectEl = document.getElementById('stage-preset-select');
-            const selectedVal = selectEl.value;
-            const titleToAdd = selectedVal ? selectedVal : "Nova Etapa";
-
-            const currentData = quillInstances.map(item => ({
+        function getCurrentColumnsData() {
+            return quillInstances.map(item => ({
                 title: item.getTitle(),
                 html: item.quill.root.innerHTML
             }));
-            currentData.push({ title: titleToAdd, html: "" });
-            
-            const container = document.getElementById('dynamic-columns-container');
-            container.innerHTML = '';
-            quillInstances = [];
+        }
 
-            currentData.forEach((stage, index) => {
-                renderColumnElement(stage.title, stage.html, true, index);
-            });
+        // ADICIONAR QUANTOS CARDS QUISER DE QUALQUER ETAPA
+        window.addStageColumn = function(stageTitle) {
+            const currentData = getCurrentColumnsData();
+            currentData.push({ title: stageTitle, html: "" });
+            rebuildAllColumns(currentData);
+        };
 
-            selectEl.value = "";
+        window.addCustomStageColumn = function() {
+            const input = document.getElementById('custom-stage-title');
+            const title = input.value.trim() || "Etapa Personalizada";
+            addStageColumn(title);
+            input.value = "";
         };
 
         window.removeColumn = function(indexToRemove) {
-            const currentData = [];
-            quillInstances.forEach((item, idx) => {
-                if (idx !== indexToRemove) {
-                    currentData.push({
-                        title: item.getTitle(),
-                        html: item.quill.root.innerHTML
-                    });
-                }
-            });
-
-            const container = document.getElementById('dynamic-columns-container');
-            container.innerHTML = '';
-            quillInstances = [];
-
-            currentData.forEach((stage, index) => {
-                renderColumnElement(stage.title, stage.html, true, index);
-            });
+            const currentData = getCurrentColumnsData().filter((_, idx) => idx !== indexToRemove);
+            rebuildAllColumns(currentData);
         };
 
         window.moveColumn = function(index, direction) {
             const newIndex = index + direction;
-            const currentData = quillInstances.map(item => ({
-                title: item.getTitle(),
-                html: item.quill.root.innerHTML
-            }));
-
+            const currentData = getCurrentColumnsData();
             if (newIndex < 0 || newIndex >= currentData.length) return;
 
             const temp = currentData[index];
             currentData[index] = currentData[newIndex];
             currentData[newIndex] = temp;
 
-            const container = document.getElementById('dynamic-columns-container');
-            container.innerHTML = '';
-            quillInstances = [];
-
-            currentData.forEach((stage, idx) => {
-                renderColumnElement(stage.title, stage.html, true, idx);
-            });
+            rebuildAllColumns(currentData);
         };
 
         // AUTO-PREENCHER SUGESTÕES DE ALUNOS
@@ -616,42 +606,84 @@
 
             filterAluno.value = currentFilterVal;
             pastFilterAluno.value = currentPastFilterVal;
+        }, (err) => {
+            console.warn("Aviso ao carregar lista de alunos:", err);
         });
 
-        // FORM SUBMIT (CRIAR OU EDITAR)
+        // FORM SUBMIT (CRIAR OU EDITAR COM TRATAMENTO E FEEDBACK)
         const planForm = document.getElementById('plan-form');
         planForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const aluno = document.getElementById('plan-aluno').value;
-            const date = document.getElementById('plan-date').value;
+
+            const submitBtn = document.getElementById('submit-btn');
+            const originalBtnHtml = submitBtn.innerHTML;
+
+            const aluno = (document.getElementById('plan-aluno').value || '').trim();
+            const date = document.getElementById('plan-date').value || todayStr;
             const time = document.getElementById('plan-time').value || '';
-            const focus = document.getElementById('plan-focus').value;
-            const topic = document.getElementById('plan-topic').value;
-            const status = document.getElementById('plan-status').value;
-            
-            const columnsData = quillInstances.map(item => ({
-                title: item.getTitle(),
-                html: item.quill.root.innerHTML
+            const focus = document.getElementById('plan-focus').value || 'Sistema (PPP - Gramática/Vocab)';
+            const topic = (document.getElementById('plan-topic').value || '').trim();
+            const status = document.getElementById('plan-status').value || '🔵 Rascunho';
+
+            if (!aluno || !topic) {
+                alert("Por favor, preencha o nome do(a) aluno(a) e o tópico da aula.");
+                return;
+            }
+
+            const columnsData = getCurrentColumnsData().map(col => ({
+                title: String(col.title || 'Etapa'),
+                html: String(col.html || '')
             }));
 
             const editId = document.getElementById('editing-id').value;
 
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Salvando...`;
+            setSyncStatus('saving', 'Salvando na nuvem...');
+
             try {
                 if (editId) {
                     await updateDoc(doc(db, "lessonplans", editId), {
-                        aluno, date, time, focus, topic, status, columnsData
+                        aluno,
+                        date,
+                        time,
+                        focus,
+                        topic,
+                        status,
+                        columnsData,
+                        updatedAt: Date.now()
                     });
                     cancelEdit();
                 } else {
                     await addDoc(collection(db, "lessonplans"), {
-                        aluno, date, time, focus, topic, status, columnsData,
+                        aluno,
+                        date,
+                        time,
+                        focus,
+                        topic,
+                        status,
+                        columnsData,
                         createdAt: Date.now()
                     });
                     planForm.reset();
                     document.getElementById('plan-date').value = todayStr;
-                    buildColumns("Sistema (PPP - Gramática/Vocab)");
+                    rebuildAllColumns([]);
                 }
-            } catch (err) { console.error("Erro ao salvar plano:", err); }
+
+                setSyncStatus('ok', 'Salvo com sucesso!');
+                submitBtn.innerHTML = `<i class="fa-solid fa-check"></i> Salvo!`;
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = editId ? `<i class="fa-solid fa-floppy-disk"></i> Salvar Plano de Aula` : originalBtnHtml;
+                }, 1200);
+
+            } catch (err) {
+                console.error("Erro detalhado ao salvar plano:", err);
+                setSyncStatus('error', 'Falha ao salvar');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+                alert("Erro ao salvar o plano de aula no banco de dados:\n" + (err.message || err));
+            }
         });
 
         window.startEditPlan = function(id) {
@@ -666,10 +698,10 @@
             document.getElementById('plan-topic').value = plan.topic || '';
             document.getElementById('plan-status').value = plan.status || '🔵 Rascunho';
             
-            buildColumns(plan.focus, plan.columnsData || []);
+            rebuildAllColumns(Array.isArray(plan.columnsData) ? plan.columnsData : []);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-base"></i> Editar Plano de Aula`;
-            document.getElementById('submit-btn').innerText = "Atualizar Plano";
+            document.getElementById('submit-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Atualizar Plano`;
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
@@ -686,10 +718,10 @@
             document.getElementById('plan-topic').value = `${plan.topic || ''} (Cópia)`;
             document.getElementById('plan-status').value = '🔵 Rascunho';
 
-            buildColumns(plan.focus, plan.columnsData || []);
+            rebuildAllColumns(Array.isArray(plan.columnsData) ? plan.columnsData : []);
 
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-copy text-base"></i> Duplicar Plano de Aula`;
-            document.getElementById('submit-btn').innerText = "Salvar Novo Plano";
+            document.getElementById('submit-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Salvar Novo Plano`;
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
@@ -699,25 +731,41 @@
             planForm.reset();
             document.getElementById('plan-date').value = todayStr;
             document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-nib text-base"></i> Novo Plano de Aula`;
-            document.getElementById('submit-btn').innerText = "Salvar Plano de Aula";
+            document.getElementById('submit-btn').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Salvar Plano de Aula`;
             document.getElementById('cancel-edit-btn').classList.add('hidden');
-            buildColumns("Sistema (PPP - Gramática/Vocab)");
+            rebuildAllColumns([]);
         };
 
         window.deletePlan = async function(id) {
             if (confirm("Deseja realmente excluir este plano de aula?")) {
-                await deleteDoc(doc(db, "lessonplans", id));
+                try {
+                    setSyncStatus('saving', 'Excluindo...');
+                    await deleteDoc(doc(db, "lessonplans", id));
+                    expandedCardIds.delete(id);
+                    setSyncStatus('ok', 'Sincronizado na Nuvem');
+                } catch (err) {
+                    console.error("Erro ao excluir:", err);
+                    setSyncStatus('error', 'Erro ao excluir');
+                    alert("Erro ao excluir plano: " + err.message);
+                }
             }
         };
 
         let cachedPlans = [];
 
-        onSnapshot(query(collection(db, "lessonplans"), orderBy("date", "desc")), (snapshot) => {
+        // Escuta em tempo real sem depender exclusivamente de índice composto
+        onSnapshot(collection(db, "lessonplans"), (snapshot) => {
             cachedPlans = [];
             snapshot.forEach(docSnap => {
                 cachedPlans.push({ id: docSnap.id, ...docSnap.data() });
             });
+            // Ordena por data decrescente (mais recente primeiro)
+            cachedPlans.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            setSyncStatus('ok', 'Sincronizado na Nuvem');
             renderPlansList();
+        }, (err) => {
+            console.error("Erro ao sincronizar lessonplans:", err);
+            setSyncStatus('error', 'Erro de conexão');
         });
 
         window.renderPlansList = function() {
@@ -729,11 +777,9 @@
             const countBadge = document.getElementById('current-plans-count-badge');
 
             grid.innerHTML = '';
-            let displayedCount = 0;
 
             const currentPlans = cachedPlans.filter(plan => {
                 const status = plan.status || '🔵 Rascunho';
-                // Apenas rascunhos ou prontos ficam em Planos Atuais
                 return !status.includes('Concluído / Ministrado');
             });
 
@@ -749,15 +795,14 @@
                 return matchesSearch && matchesAluno && matchesFocus;
             });
 
+            countBadge.innerText = filteredCurrent.length;
+
             if (filteredCurrent.length === 0) {
-                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhum plano atual encontrado.</p>`;
-                countBadge.innerText = '0';
+                grid.innerHTML = `<p class="text-neutral-400 italic col-span-full text-sm">Nenhum plano atual encontrado.</p>`;
             } else {
                 filteredCurrent.forEach(data => {
-                    displayedCount++;
                     grid.appendChild(createPlanCardElement(data));
                 });
-                countBadge.innerText = displayedCount;
             }
 
             // --- SESSÃO 2: AULAS MINISTRADAS (PAST LESSONS) ---
@@ -768,7 +813,6 @@
             const pastCountBadge = document.getElementById('past-plans-count-badge');
 
             pastGrid.innerHTML = '';
-            let pastDisplayedCount = 0;
 
             const pastPlans = cachedPlans.filter(plan => {
                 const status = plan.status || '🔵 Rascunho';
@@ -787,26 +831,30 @@
                 return matchesSearch && matchesAluno && matchesFocus;
             });
 
+            pastCountBadge.innerText = pastPlans.length;
+
             if (filteredPast.length === 0) {
-                pastGrid.innerHTML = `<p class="text-neutral-400 italic col-span-full">Nenhuma aula ministrada encontrada.</p>`;
-                pastCountBadge.innerText = '0';
+                pastGrid.innerHTML = `<p class="text-neutral-400 italic col-span-full text-xs">Nenhuma aula ministrada encontrada.</p>`;
             } else {
                 filteredPast.forEach(data => {
-                    pastDisplayedCount++;
                     pastGrid.appendChild(createPlanCardElement(data));
                 });
-                pastCountBadge.innerText = pastDisplayedCount;
             }
         };
 
         function createPlanCardElement(data) {
             const id = data.id;
+            const isExpanded = expandedCardIds.has(id);
             const dateTxt = formatDateDisplay(data.date);
             const timeTxt = data.time ? ` às ${data.time}` : '';
             const currentStatus = data.status || '🔵 Rascunho';
+            const stagesCount = Array.isArray(data.columnsData) ? data.columnsData.length : 0;
 
             const card = document.createElement('div');
-            card.className = "p-4 rounded-xl shadow-lg border border-[#502064] self-start col-span-1 md:col-span-2";
+            // Compacto ocupa 1 coluna no grid; quando clicado/expandido ocupa a largura toda (col-span-2)
+            card.className = isExpanded
+                ? "p-4 rounded-xl shadow-xl border border-[#F48FB1]/60 col-span-1 md:col-span-2 transition-all"
+                : "p-3.5 rounded-xl shadow-md border border-[#502064] hover:border-[#F48FB1]/60 col-span-1 transition-all cursor-pointer";
             card.style.backgroundColor = "#262626";
 
             const focusBadgeColor = (data.focus || '').includes('Sistema') ? 'bg-[#502064] text-[#F48FB1] border-[#6B3A7E]' :
@@ -814,7 +862,43 @@
                                    (data.focus || '').includes('Produtivas') ? 'bg-amber-950 text-amber-300 border-amber-800' :
                                    (data.focus || '').includes('Free') ? 'bg-purple-950 text-purple-300 border-purple-800' : 'bg-pink-950 text-pink-300 border-pink-800';
 
-            // Renderização das colunas dentro do card
+            // MODO COMPACTO (FECHADO POR PADRÃO)
+            if (!isExpanded) {
+                card.onclick = (e) => {
+                    // Evita abrir/fechar se o clique foi no seletor de status
+                    if (e.target.closest('select')) return;
+                    toggleCardExpand(id);
+                };
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="min-w-0 flex-grow space-y-1">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-chevron-right text-[11px] text-[#F48FB1] shrink-0"></i>
+                                <h3 class="font-title text-base sm:text-lg text-[#F48FB1] truncate">${data.aluno || 'Aluno não informado'}</h3>
+                            </div>
+                            <div class="text-xs text-white/90 font-medium truncate pl-4">${data.topic || 'Sem tópico'}</div>
+                            <div class="flex flex-wrap items-center gap-2 text-[11px] text-[#D8B4D9]/70 pl-4 pt-0.5">
+                                <span><i class="fa-regular fa-calendar"></i> ${dateTxt}${timeTxt}</span>
+                                <span>•</span>
+                                <span><i class="fa-solid fa-layer-group"></i> ${stagesCount} ${stagesCount === 1 ? 'etapa' : 'etapas'}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col items-end gap-1.5 shrink-0">
+                            <span class="text-[10px] px-2 py-0.5 rounded border ${focusBadgeColor} max-w-[150px] truncate">${data.focus || ''}</span>
+                            <select onchange="updatePlanStatusDirect('${id}', this.value)" class="text-[10px] bg-[#1A1A1A] border border-[#6B3A7E] text-[#D8B4D9] rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-[#F48FB1] cursor-pointer">
+                                <option value="🔵 Rascunho" ${currentStatus === '🔵 Rascunho' ? 'selected' : ''}>🔵 Rascunho</option>
+                                <option value="🟢 Pronto para Aula" ${currentStatus === '🟢 Pronto para Aula' ? 'selected' : ''}>🟢 Pronto para Aula</option>
+                                <option value="🟣 Concluído / Ministrado" ${currentStatus === '🟣 Concluído / Ministrado' ? 'selected' : ''}>🟣 Concluído / Ministrado</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+                return card;
+            }
+
+            // MODO EXPANDIDO (ABERTO AO CLICAR)
             let columnsCardHtml = '';
             if (Array.isArray(data.columnsData) && data.columnsData.length > 0) {
                 columnsCardHtml = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">`;
@@ -822,7 +906,7 @@
                     columnsCardHtml += `
                         <div class="bg-[#1A1A1A] p-3 rounded-lg border border-[#6B3A7E]/40 space-y-1">
                             <h5 class="font-bold text-[#F48FB1] text-xs border-b border-[#6B3A7E]/30 pb-1">${col.title}</h5>
-                            <div class="text-xs text-[#D8B4D9] ql-editor" style="max-height: 250px; overflow-y: auto;">
+                            <div class="text-xs text-[#D8B4D9] ql-editor" style="max-height: 280px; overflow-y: auto;">
                                 ${col.html || '<em class="text-neutral-500">Vazio</em>'}
                             </div>
                         </div>
@@ -835,15 +919,15 @@
 
             card.innerHTML = `
                 <div>
-                    <!-- CABEÇALHO DO CARD -->
-                    <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2 mb-3 gap-2">
-                        <div class="flex items-center gap-2">
-                            <button onclick="toggleCardCollapse('${id}')" class="text-[#F48FB1] hover:text-white transition">
-                                <i id="card-icon-${id}" class="fa-solid fa-chevron-down transition-transform"></i>
+                    <!-- CABEÇALHO DO CARD EXPANDIDO -->
+                    <div class="flex justify-between items-start border-b border-[#6B3A7E]/50 pb-2.5 mb-3 gap-2">
+                        <div onclick="toggleCardExpand('${id}')" class="flex items-center gap-2.5 cursor-pointer group">
+                            <button type="button" class="text-[#F48FB1] group-hover:text-white transition">
+                                <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             <div>
-                                <h3 class="font-title text-lg sm:text-xl text-[#F48FB1]">${data.aluno || 'Aluno não informado'}</h3>
-                                <div class="text-xs text-[#D8B4D9]/80 font-medium">${data.topic || 'Sem tópico'}</div>
+                                <h3 class="font-title text-lg sm:text-xl text-[#F48FB1] group-hover:underline">${data.aluno || 'Aluno não informado'}</h3>
+                                <div class="text-xs text-white/90 font-medium">${data.topic || 'Sem tópico'}</div>
                             </div>
                         </div>
                         <div class="flex flex-col items-end gap-1.5">
@@ -856,10 +940,13 @@
                         </div>
                     </div>
 
-                    <!-- CONTEÚDO COLAPSÁVEL DO CARD -->
-                    <div id="card-body-${id}" style="display: block;" class="space-y-3">
-                        <div class="text-xs text-[#D8B4D9]/60 italic flex items-center gap-2">
-                            <i class="fa-solid fa-calendar-day"></i> Data: ${dateTxt}${timeTxt}
+                    <!-- CONTEÚDO COMPLETO DO CARD -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-xs text-[#D8B4D9]/70 italic">
+                            <span class="flex items-center gap-2"><i class="fa-solid fa-calendar-day"></i> Data: ${dateTxt}${timeTxt}</span>
+                            <button type="button" onclick="toggleCardExpand('${id}')" class="text-[11px] text-[#F48FB1] hover:underline not-italic">
+                                <i class="fa-solid fa-compress"></i> Recolher card
+                            </button>
                         </div>
 
                         <!-- COLUNAS DO PLANO -->
@@ -867,12 +954,12 @@
 
                         <!-- RODAPÉ DE AÇÕES -->
                         <div class="mt-4 pt-3 border-t border-[#6B3A7E]/40 flex justify-between items-center text-xs">
-                            <button onclick="duplicatePlan('${id}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
+                            <button type="button" onclick="duplicatePlan('${id}')" class="px-3 py-1 bg-[#33131A] text-[#F48FB1] hover:bg-[#502064] border border-[#6B3A7E] rounded transition flex items-center gap-1">
                                 <i class="fa-solid fa-copy"></i> Duplicar Plano
                             </button>
-                            <div class="flex gap-2">
-                                <button onclick="startEditPlan('${id}')" class="text-neutral-400 hover:text-[#F48FB1] transition flex items-center gap-1"><i class="fa-solid fa-pen"></i> Editar</button>
-                                <button onclick="deletePlan('${id}')" class="text-neutral-400 hover:text-rose-400 transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
+                            <div class="flex gap-3">
+                                <button type="button" onclick="startEditPlan('${id}')" class="text-neutral-300 hover:text-[#F48FB1] transition flex items-center gap-1"><i class="fa-solid fa-pen"></i> Editar</button>
+                                <button type="button" onclick="deletePlan('${id}')" class="text-neutral-300 hover:text-rose-400 transition flex items-center gap-1"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </div>
                         </div>
                     </div>
@@ -882,8 +969,8 @@
             return card;
         }
 
-        // Inicializar com o foco padrão ao abrir a página
-        buildColumns("Sistema (PPP - Gramática/Vocab)");
+        // Inicializar área de montagem limpa
+        rebuildAllColumns([]);
     </script>
 </body>
 </html>
